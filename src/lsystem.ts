@@ -7,37 +7,12 @@ function Rule(prob: number, str: String) {
 
  export default class Lsystem{
 	axiom : string;
-	grammar : { [id: string] : string; } = {};	
 	iterations: number;
 
 	constructor(axiom: string, iterations: number) {
 	// default LSystem
 		this.axiom = axiom;
-		this.grammar = {};
-		this.grammar["X"] = "S[+FFXFFFFFXFFFFFFFX]+FFFFFFFFFFXFFFFFFX";
 		this.iterations = iterations; 
-	}
-
-	// A function to alter the axiom string stored 
-	// in the L-system
-	updateAxiom = function(axiom: String) {
-		// Setup axiom
-		if (axiom !== "undefined") {
-			this.axiom = axiom;
-		}
-	}
-	//A function to alter the grammar string stored 
-	//in the L-system
-	updateGrammar = function(grammar: String) {
-		// Setup axiom
-		if (grammar !== "undefined") {
-			this.grammar = grammar;
-		}
-	}
-	mapCtoStr = function(c : string) {
-		if(c === "X") {
-			return this.grammar["X"];
-		}
 	}
 
 //this will return the expanded string in array form

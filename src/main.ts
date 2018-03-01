@@ -22,6 +22,9 @@ import Lsystem from './lsystem';
 //turtle
 import Turtle from './turtle';
 
+//shapes
+import Shape from './geometry/Shape';
+
 // Define an object with application parameters and button callbacks
 // This will be referred to by dat.GUI's functions that add GUI elements.
 const controls = {
@@ -49,6 +52,9 @@ let height: number;
 //time
 let count: number = 0.0;
 
+//grammar city
+let shapes: Set<Shape>;
+
 function loadScene() {
   cylinder = new Cylinder(vec3.fromValues(0,0,0));
   cylinder.create();
@@ -64,7 +70,7 @@ function loadScene() {
 
 function main() {
     //lsystem
-    axiom = "FFFFFFFFFFX";
+    //axiom = "FFFFFFFFFFX";
     height = controls.randomize;
     iteration = controls.iterations;
     var lsys = new Lsystem(axiom, iteration);
@@ -76,6 +82,12 @@ function main() {
     var turtle = new Turtle(tree1, tree2, path, height);
     turtle.draw();
 
+    //grammar shapes
+    var numberOfShapes = 2;
+
+    for(var i = 0; i < numberOfShapes; ++i) {
+      var shape = new Shape()
+    }
     
   // Initial display for framerate
   const stats = Stats();
