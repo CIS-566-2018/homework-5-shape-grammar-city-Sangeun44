@@ -5,7 +5,7 @@ import {gl} from '../globals';
 //obj
 var OBJ = require('webgl-obj-loader');
 
-class Flower extends Drawable {
+class Carrot extends Drawable {
   indices: Uint32Array;
   positions: Float32Array;
   normals: Float32Array;
@@ -22,7 +22,7 @@ class Flower extends Drawable {
     this.normals = new Float32Array([]);
 
      //obj loader
-    this.objStr = document.getElementById('why_flower.obj').innerHTML;
+    this.objStr = document.getElementById('why_carrot.obj').innerHTML;
     this.mesh = new OBJ.Mesh(this.objStr); 
 
     this.addMeshData();
@@ -69,9 +69,9 @@ class Flower extends Drawable {
 
     //vertex positions
     for(var i = 0; i < this.mesh.vertices.length; i = i + 3) {
-        objPos.push(this.mesh.vertices[i] + this.center[0]);
-        objPos.push(this.mesh.vertices[i+1] + this.center[1]);
-        objPos.push(this.mesh.vertices[i+2] + this.center [2]);
+        objPos.push(this.mesh.vertices[i]);
+        objPos.push(this.mesh.vertices[i+1]);
+        objPos.push(this.mesh.vertices[i+2]);
         objPos.push(1);
     }  
 
@@ -95,8 +95,8 @@ class Flower extends Drawable {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.bufPos);
     gl.bufferData(gl.ARRAY_BUFFER, this.positions, gl.STATIC_DRAW);
 
-    console.log(`Created flower`);
+    console.log(`Created cylinder`);
   }
 };
 
-export default Flower;
+export default Carrot;

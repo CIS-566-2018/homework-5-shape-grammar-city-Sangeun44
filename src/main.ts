@@ -2,12 +2,8 @@ import {vec3, vec4} from 'gl-matrix';
 import * as Stats from 'stats-js';
 import * as DAT from 'dat-gui';
 
-import Icosphere from './geometry/Icosphere';
 import Square from './geometry/Square';
-import Cube from './geometry/Cube';
-import Cylinder from './geometry/Cylinder';
-import Flower from './geometry/flower';
-import Tree from './geometry/Tree';
+import City from './geometry/City';
 import Base from './geometry/Base';
 
 import OpenGLRenderer from './rendering/gl/OpenGLRenderer';
@@ -22,8 +18,8 @@ import Lsystem from './lsystem';
 //turtle
 import Turtle from './turtle';
 
-//shapes
-import Shape from './geometry/Shape';
+//shapeGrammar
+import ShapeGrammar from './ShapeGrammar';
 
 // Define an object with application parameters and button callbacks
 // This will be referred to by dat.GUI's functions that add GUI elements.
@@ -37,35 +33,27 @@ const controls = {
 };
 
 //shapes
-let icosphere: Icosphere;
 let square: Square;
-let cylinder: Cylinder;
-let cube: Cube;
-let flower: Flower;
-let tree1: Tree;
-let tree2: Tree;
+let city1: City;
+let city2: City;
 let base: Base;
 
 let iteration: number;
 let axiom: string;
 let height: number;
+
 //time
 let count: number = 0.0;
 
 //grammar city
-let shapes: Set<Shape>;
 
 function loadScene() {
-  cylinder = new Cylinder(vec3.fromValues(0,0,0));
-  cylinder.create();
-  flower = new Flower(vec3.fromValues(0,0,0));
-  flower.create();
   base = new Base(vec3.fromValues(0,0,0));
   base.create();
   square = new Square(vec3.fromValues(0,0,0));
   square.create();
-  tree1.create();
-  tree2.create();
+  city1.create();
+  city2.create();
 }
 
 function main() {
@@ -76,18 +64,11 @@ function main() {
     var lsys = new Lsystem(axiom, iteration);
     var path = lsys.createPath(); //create string path
 
-    tree1 = new Tree(vec3.fromValues(0,0,0));
-    tree2 = new Tree(vec3.fromValues(0,0,0));
+    city1 = new City(vec3.fromValues(0,0,0));
+    city2 = new City(vec3.fromValues(0,0,0));
      //turle action
-    var turtle = new Turtle(tree1, tree2, path, height);
+    var turtle = new Turtle(city1, city2, path, height);
     turtle.draw();
-
-    //grammar shapes
-    var numberOfShapes = 2;
-
-    for(var i = 0; i < numberOfShapes; ++i) {
-      var shape = new Shape()
-    }
     
   // Initial display for framerate
   const stats = Stats();
@@ -168,15 +149,15 @@ function main() {
         var lsys = new Lsystem(axiom, iteration);
         var path = lsys.createPath(); //create string path
 
-        tree1 = new Tree(vec3.fromValues(0,0,0));
-        tree2 = new Tree(vec3.fromValues(0,0,0));
+        city1 = new City(vec3.fromValues(0,0,0));
+        city2 = new City(vec3.fromValues(0,0,0));
 
         //turle action
-       var turtle = new Turtle(tree1, tree2, path, height);
+       var turtle = new Turtle(city1, city2, path, height);
        turtle.draw();
    
-       tree1.create();
-       tree2.create();
+       city1.create();
+       city2.create();
 
        ta = height;
        console.log("height: " + ta);
@@ -189,15 +170,15 @@ function main() {
         var lsys = new Lsystem(axiom, iteration);
         var path = lsys.createPath(); //create string path
         console
-        tree1 = new Tree(vec3.fromValues(0,0,0));
-        tree2 = new Tree(vec3.fromValues(0,0,0));
+        city1 = new City(vec3.fromValues(0,0,0));
+        city2 = new City(vec3.fromValues(0,0,0));
 
         //turle action
-        var turtle = new Turtle(tree1, tree2, path, height);
+        var turtle = new Turtle(city1, city2, path, height);
         turtle.draw();
         
-        tree1.create();
-        tree2.create();
+        city1.create();
+        city2.create();
       }
       it = iteration;
 
@@ -205,8 +186,8 @@ function main() {
       renderer.clear();
 
       //renderer.render(camera, tree_lambert, [flower]);
-      renderer.render(camera, tree_lambert, [tree1]);
-      renderer.render(camera, vertex, [tree2]);
+      renderer.render(camera, tree_lambert, [city1]);
+      renderer.render(camera, vertex, [city2]);
       renderer.render(camera, tree_lambert, [base]);
       base_lambert.setGeometryColor(base_color);
       //renderer.render(camera, base_lambert, [square]);
@@ -235,3 +216,7 @@ function main() {
 
 main();
 
+function doLsystem(sg : ShapeGrammar, it: n, turtle, pos, rot, xax, zax) {
+  var result = lsystem.doIterations(iterations, pos, rot, new THREE.Vector3(2.0, 1.0, 1.0), getMaterial(), xax, zax, false);
+  turtle.renderSymbols(result);
+}

@@ -1,8 +1,8 @@
 import {vec3, vec4} from 'gl-matrix';
 import Drawable from '../rendering/gl/Drawable';
 import {gl} from '../globals';
-import Cylinder from './Cylinder';
-import Flower from './flower';
+import Carrot from './Carrot';
+import Chimney from './Chimney';
 
 class City extends Drawable {
     indices: Uint32Array;
@@ -44,13 +44,13 @@ class City extends Drawable {
     return maxIndex;
 }
 
-  addCylinder(cyl: Cylinder) {
+  addChimney(chim: Chimney) {
     var objInd = new Array<number>();
-    objInd = cyl.getInd();
+    objInd = chim.getInd();
     var objNorm = new Array<number>();
-    objNorm = cyl.getNorm();
+    objNorm = chim.getNorm();
     var objPos = new Array<number>();
-    objPos = cyl.getPos();
+    objPos = chim.getPos();
 
     for(var i = 0; i < objPos.length; ++i) {
       this.pos.push(objPos[i]);
@@ -86,13 +86,13 @@ class City extends Drawable {
 
   }
 
-  addFlower(cyl: Flower) {
+  addCarrot(carrot : Carrot) {
     var objInd = new Array<number>();
-    objInd = cyl.getInd();
+    objInd = carrot.getInd();
     var objNorm = new Array<number>();
-    objNorm = cyl.getNorm();
+    objNorm = carrot.getNorm();
     var objPos = new Array<number>();
-    objPos = cyl.getPos();
+    objPos = carrot.getPos();
 
     for(var i = 0; i < objPos.length; ++i) {
       this.pos.push(objPos[i]);

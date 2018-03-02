@@ -5,7 +5,7 @@ import {gl} from '../globals';
 //obj
 var OBJ = require('webgl-obj-loader');
 
-class Base extends Drawable {
+class Orange extends Drawable {
   indices: Uint32Array;
   positions: Float32Array;
   normals: Float32Array;
@@ -16,13 +16,13 @@ class Base extends Drawable {
 
   constructor(center: vec3) {
     super(); // Call the constructor of the super class. This is required.
-    this.center = vec4.fromValues(0, 150, 0, 1);
+    this.center = vec4.fromValues(center[0], center[1], center[2], 1);
     this.indices = new Uint32Array([]);
     this.positions = new Float32Array([]);
     this.normals = new Float32Array([]);
 
      //obj loader
-    this.objStr = document.getElementById('why_ie.obj').innerHTML;
+    this.objStr = document.getElementById('why_cylinder.obj').innerHTML;
     this.mesh = new OBJ.Mesh(this.objStr); 
 
     this.addMeshData();
@@ -69,9 +69,9 @@ class Base extends Drawable {
 
     //vertex positions
     for(var i = 0; i < this.mesh.vertices.length; i = i + 3) {
-        objPos.push(this.mesh.vertices[i] + this.center[0]);
-        objPos.push(this.mesh.vertices[i+1] + this.center[1]);
-        objPos.push(this.mesh.vertices[i+2] + this.center[2]);
+        objPos.push(this.mesh.vertices[i]);
+        objPos.push(this.mesh.vertices[i+1]);
+        objPos.push(this.mesh.vertices[i+2]);
         objPos.push(1);
     }  
 
@@ -99,4 +99,4 @@ class Base extends Drawable {
   }
 };
 
-export default Base;
+export default Orange;
