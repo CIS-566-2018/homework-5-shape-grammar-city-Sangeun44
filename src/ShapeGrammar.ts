@@ -12,37 +12,6 @@ export default class ShapeGrammar {
             this.shapeSet = new Set();
       }
 
-      //remove this shape returning empty set
-      modif3 = function (shape: Shape) {
-            if (this.shapeSet.size != 0) {
-                  this.shapeSet.delete(shape);
-
-                  if (shape.door) {
-                        var scale = vec3.fromValues(0.5, 1.0, 0.1);
-                        var pos1 = shape.position;
-                        pos1[2] -= 0.5;
-                        this.shapeSet.add(new Shape('G', pos1, shape.rotation, scale, shape.material, shape.x, shape.z, false));
-                  }
-            }
-      }
-
-      //do nothing to this shape, return it unchanged
-      modif4 = function (shape: Shape) {
-            if (this.shapeSet.size != 0) {
-                  if (shape.door) {
-                        var scale = vec3.fromValues(0.5, 1.0, 0.1);
-                        var pos1 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
-                        pos1[0] = pos1[0] + 1.25 * shape.z[0];
-                        pos1[1] = pos1[1] + 1.25 * shape.z[1];
-                        pos1[2] = pos1[2] + 1.25 * shape.z[2];
-                        pos1[1] -= 0.5;
-                        this.shapeSet.add(new Shape('G', pos1, shape.rotation, scale, shape.material, shape.x, shape.z, false));
-                  }
-            }
-      }
-
-
-
       config1 = function (shape: Shape) {
             if (this.shapeSet.size != 0) {
                   var scale1 = vec3.fromValues(shape.scale[0], shape.scale[1], shape.scale[2]);
@@ -138,66 +107,223 @@ export default class ShapeGrammar {
       }
 
       //subdivide in z, make three new shapes rotated to face front in front half
-
       config3 = function (shape: Shape) {
             if (this.shapeSet.size != 0) {
-                  var scale1 = new THREE.Vector3(initShape.scale.x, initShape.scale.y, initShape.scale.z);
-                  scale1.x *= 0.5;
-                  var pos1 = new THREE.Vector3(initShape.pos.x, initShape.pos.y, initShape.pos.z);
-                  pos1.x = pos1.x - 0.75 * initShape.xaxis.x;
-                  pos1.y = pos1.y - 0.75 * initShape.xaxis.y;
-                  pos1.z = pos1.z - 0.75 * initShape.xaxis.z;
-                  shapeSet.add(new Shape('D', pos1, initShape.rot, scale1, initShape.material, initShape.xaxis, initShape.zaxis));
+                  var scale1 = vec3.fromValues(shape.scale[0], shape.scale[1], shape.scale[2]);
+                  scale1[0] *= 0.5;
+                  var pos1 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
+                  pos1[0] = pos1[0] - 0.75 * shape.x[0];
+                  pos1[1] = pos1[1] - 0.75 * shape.x[1];
+                  pos1[2] = pos1[2] - 0.75 * shape.x[2];
+                  this.shapeSet.add(new Shape('D', pos1, shape.rotation, scale1, shape.material, shape.x, shape.z, false));
 
-                  var scale2 = new THREE.Vector3(initShape.scale.x, initShape.scale.y, initShape.scale.z);
-                  scale2.x *= 0.3;
-                  scale2.z *= 0.5;
-                  var rot = new THREE.Vector3(initShape.rot.x, initShape.rot.y, initShape.rot.z);
-                  rot.y += 3.1415 / 2.0;
-                  var xax = new THREE.Vector3(initShape.xaxis.x, initShape.xaxis.y, initShape.xaxis.z);
-                  xax.applyAxisAngle(new THREE.Vector3(0, 1, 0), 3.1415 / 2.0);
-                  var zax = new THREE.Vector3(initShape.zaxis.x, initShape.zaxis.y, initShape.zaxis.z);
-                  zax.applyAxisAngle(new THREE.Vector3(0, 1, 0), 3.1415 / 2.0);
+                  var scale2 = vec3.fromValues(shape.scale[0], shape.scale[1], shape.scale[2]);
+                  scale2[0] *= 0.3;
+                  scale2[2] *= 0.5;
+                  var rot = vec3.fromValues(shape.rotation[0], shape.rotation[1], shape.rotation[2]);
+                  rot[1] += 3.1415 / 2.0;
 
-                  var pos2 = new THREE.Vector3(initShape.pos.x, initShape.pos.y, initShape.pos.z);
-                  pos2.x = pos2.x + 0.5 * initShape.xaxis.x;
-                  pos2.y = pos2.y + 0.5 * initShape.xaxis.y;
-                  pos2.z = pos2.z + 0.5 * initShape.xaxis.z;
-                  var shape2 = new Shape('C', pos2, rot, scale2, initShape.material, xax, zax, false);
-                  shapeSet.add(shape2);
+                  var xax = vec3.fromValues(shape.x[0], shape.x[1], shape.x[2]);
+                  var matx = this.rotationMatrix(vec3.fromValues(0, 1, 0), 3.1415 / 2.0);
+                  vec3.transformMat4(xax, xax, matx);
 
-                  var pos3 = new THREE.Vector3(initShape.pos.x, initShape.pos.y, initShape.pos.z);
-                  pos3.x = pos3.x + 0.5 * initShape.xaxis.x;
-                  pos3.y = pos3.y + 0.5 * initShape.xaxis.y;
-                  pos3.z = pos3.z + 0.5 * initShape.xaxis.z;
-                  pos3.x = pos3.x - 1.6 * initShape.zaxis.x;
-                  pos3.y = pos3.y - 1.6 * initShape.zaxis.y;
-                  pos3.z = pos3.z - 1.6 * initShape.zaxis.z;
-                  var shape3 = new Shape('C', pos3, rot, scale2, initShape.material, xax, zax, false);
-                  shapeSet.add(shape3);
+                  var zax = vec3.fromValues(shape.z[0], shape.z[1], shape.z[2]);
+                  var matz = this.rotationMatrix(vec3.fromValues(0, 1, 0), 3.1415 / 2.0);
+                  vec3.transformMat4(zax, zax, matz);
 
-                  var pos4 = new THREE.Vector3(initShape.pos.x, initShape.pos.y, initShape.pos.z);
-                  pos4.x = pos4.x + 0.5 * initShape.xaxis.x;
-                  pos4.y = pos4.y + 0.5 * initShape.xaxis.y;
-                  pos4.z = pos4.z + 0.5 * initShape.xaxis.z;
-                  pos4.x = pos4.x + 1.6 * initShape.zaxis.x;
-                  pos4.y = pos4.y + 1.6 * initShape.zaxis.y;
-                  pos4.z = pos4.z + 1.6 * initShape.zaxis.z;
-                  var shape4 = new Shape('C', pos4, rot, scale2, initShape.material, xax, zax, false);
-                  shapeSet.add(shape4);
+                  var pos2 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
+                  pos2[0] = pos2[0] + 0.5 * shape.x[0];
+                  pos2[1] = pos2[1] + 0.5 * shape.x[1];
+                  pos2[2] = pos2[2] + 0.5 * shape.x[2];
+                  var shape2 = new Shape('C', pos2, rot, scale2, shape.material, xax, zax, false);
+                  this.shapeSet.add(shape2);
+
+                  var pos3 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
+                  pos3[0] = pos3[0] + 0.5 * shape.x[0];
+                  pos3[1] = pos3[1] + 0.5 * shape.x[1];
+                  pos3[2] = pos3[2] + 0.5 * shape.x[2];
+                  pos3[0] = pos3[0] - 1.6 * shape.z[0];
+                  pos3[1] = pos3[1] - 1.6 * shape.z[1];
+                  pos3[2] = pos3[2] - 1.6 * shape.z[2];
+                  var shape3 = new Shape('C', pos3, rot, scale2, shape.material, xax, zax, false);
+                  this.shapeSet.add(shape3);
+
+                  var pos4 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
+                  pos4[0] = pos4[0] + 0.5 * shape.x[0];
+                  pos4[1] = pos4[1] + 0.5 * shape.x[1];
+                  pos4[2] = pos4[2] + 0.5 * shape.x[2];
+                  pos4[0] = pos4[0] + 1.6 * shape.z[0];
+                  pos4[1] = pos4[1] + 1.6 * shape.z[1];
+                  pos4[2] = pos4[2] + 1.6 * shape.z[2];
+                  var shape4 = new Shape('C', pos4, rot, scale2, shape.material, xax, zax, false);
+                  this.shapeSet.add(shape4);
 
                   var rando = Math.random();
                   if (rando < 0.333) {
-                        shape2.hasDoor = true;
+                        shape2.door = true;
                   }
                   else if (rando < 0.666) {
-                        shape3.hasDoor = true;
+                        shape3.door = true;
                   }
                   else {
-                        shape4.hasDoor = true;
+                        shape4.door = true;
                   }
 
-                  shapeSet.delete(initShape);
+                  this.shapeSet.delete(shape);
+            }
+      }
+
+      //remove this shape returning empty set
+      modif3 = function (shape: Shape) {
+            if (this.shapeSet.size != 0) {
+                  this.shapeSet.delete(shape);
+
+                  if (shape.door) {
+                        var scale = vec3.fromValues(0.5, 1.0, 0.1);
+                        var pos1 = shape.position;
+                        pos1[2] -= 0.5;
+                        this.shapeSet.add(new Shape('G', pos1, shape.rotation, scale, shape.material, shape.x, shape.z, false));
+                  }
+            }
+      }
+
+      //do nothing to this shape, return it unchanged
+      modif4 = function (shape: Shape) {
+            if (this.shapeSet.size != 0) {
+                  if (shape.door) {
+                        var scale = vec3.fromValues(0.5, 1.0, 0.1);
+                        var pos1 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
+                        pos1[0] = pos1[0] + 1.25 * shape.z[0];
+                        pos1[1] = pos1[1] + 1.25 * shape.z[1];
+                        pos1[2] = pos1[2] + 1.25 * shape.z[2];
+                        pos1[1] -= 0.5;
+                        this.shapeSet.add(new Shape('G', pos1, shape.rotation, scale, shape.material, shape.x, shape.z, false));
+                  }
+            }
+      }
+
+      //scale height of this shape by 1.25
+      modif5 = function (shape: Shape) {
+            if (this.shapeSet.size != 0) {
+                  var scale1 = vec3.fromValues(shape.scale[0], shape.scale[1], shape.scale[2]);
+                  scale1[1] *= 1.25;
+                  var pos1 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
+                  pos1[1] += 0.25;
+                  this.shapeSet.add(new Shape('T', pos1, shape.rotation, scale1, shape.material, shape.x, shape.z, false));
+
+                  this.shapeSet.delete(shape);
+
+                  if (shape.door) {
+                        var scale = vec3.fromValues(0.5, 1.0, 0.1);
+                        var pos2 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
+                        pos2[0] = pos2[0] + 1.25 * shape.z[0];
+                        pos2[1] = pos2[1] + 1.25 * shape.z[1];
+                        pos2[2] = pos2[2] + 1.25 * shape.z[2];
+                        pos2[1] -= 0.5;
+                        this.shapeSet.add(new Shape('G', pos2, shape.rotation, scale, shape.material, shape.z, shape.z, false));
+                  }
+            }
+      }
+      //scale height of this shape by 1.5
+      modif6 = function (shape: Shape) {
+            if (this.shapeSet.size != 0) {
+                  var scale1 = vec3.fromValues(shape.scale[0], shape.scale[1], shape.scale[2]);
+                  scale1[1] *= 1.5;
+                  var pos1 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
+                  pos1[1] += 0.5;
+                  this.shapeSet.add(new Shape('T', pos1, shape.rotation, scale1, shape.material, shape.x, shape.z, false));
+
+                  this.shapeSet.delete(shape);
+
+                  if (shape.door) {
+                        var scale = vec3.fromValues(0.5, 1.0, 0.1);
+                        var pos2 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
+                        pos2[0] = pos2[0] + 1.25 * shape.z[0];
+                        pos2[1] = pos2[1] + 1.25 * shape.z[1];
+                        pos2[2] = pos2[2] + 1.25 * shape.z[2];
+                        pos2[1] -= 0.5;
+                        this.shapeSet.add(new Shape('G', pos2, shape.rotation, scale, shape.material, shape.x, shape.z, false));
+                  }
+            }
+      }
+
+      //scale height by 1.5, add a chimney on left side
+      modif7 = function (shape: Shape) {
+            if (this.shapeSet.size != 0) {
+                  var scale1 = vec3.fromValues(shape.scale[0], shape.scale[1], shape.scale[2]);
+                  scale1[1] *= 1.5;
+                  var pos1 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
+                  pos1[1] += 0.5;
+                  this.shapeSet.add(new Shape('T', pos1, shape.rotation, scale1, shape.material, shape.x, shape.z, false));
+
+                  this.shapeSet.delete(shape);
+
+                  var scale = vec3.fromValues(0.5, 5.0, 0.5);
+                  var pos2 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
+                  pos2[1] += 2.0;
+                  pos2[0] = pos2[0] - 1.5 * shape.z[0];
+                  pos2[1] = pos2[1] - 1.5 * shape.z[1];
+                  pos2[2] = pos2[2] - 1.5 * shape.z[2];
+                  pos2[0] = pos2[0] - 0.5 * shape.x[0];
+                  pos2[1] = pos2[1] - 0.5 * shape.x[1];
+                  pos2[2] = pos2[2] - 0.5 * shape.x[2];
+                  this.shapeSet.add(new Shape('F', pos2, shape.rotation, scale, shape.material, shape.x, shape.z, false));
+            }
+      }
+
+      //scale height by 1.5, add a chimney on right side
+      modif8 = function (shape: Shape) {
+            if (this.hapeSet.size != 0) {
+                  var scale1 = vec3.fromValues(shape.scale[0], shape.scale[1], shape.scale[2]);
+                  scale1[2] *= 1.5;
+                  var pos1 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
+                  pos1[1] += 0.5;
+                  this.shapeSet.add(new Shape('T', pos1, shape.rotation, scale1, shape.material, shape.x, shape.z, false));
+
+                  this.shapeSet.delete(shape);
+
+                  var scale = vec3.fromValues(0.5, 5.0, 0.5);
+                  var pos2 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
+                  pos2[1] += 2.0;
+                  pos2[0] = pos2[0] + 1.5 * shape.z[0];
+                  pos2[1] = pos2[1] + 1.5 * shape.z[1];
+                  pos2[2] = pos2[2] + 1.5 * shape.z[2];
+                  pos2[0] = pos2[0] - 0.5 * shape.x[0];
+                  pos2[1] = pos2[1] - 0.5 * shape.x[1];
+                  pos2[2] = pos2[2] - 0.5 * shape.x[2];
+                  this.shapeSet.add(new Shape('F', pos2, shape.rotation, scale, shape.material, shape.x, shape.z, false));
+            }
+      }
+
+      //don't scale height, add a chimney on left side
+      modif9 = function (shape: Shape) {
+            if (this.shapeSet.size != 0) {
+                  var scale = vec3.fromValues(0.5, 4.0, 0.5);
+                  var pos2 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
+                  pos2[1] += 1.0;
+                  pos2[0] = pos2[0] - 1.5 * shape.z[0];
+                  pos2[1] = pos2[1] - 1.5 * shape.z[1];
+                  pos2[2] = pos2[2] - 1.5 * shape.z[2];
+                  pos2[0] = pos2[0] - 0.5 * shape.x[0];
+                  pos2[1] = pos2[1] - 0.5 * shape.x[1];
+                  pos2[2] = pos2[2] - 0.5 * shape.x[2];
+                  this.shapeSet.add(new Shape('F', pos2, shape.rotation, scale, shape.material, shape.x, shape.z, false));
+            }
+      }
+
+      //don't scale height, add a chimney on right side
+      modif10 = function (shape: Shape) {
+            if (this.shapeSet.size != 0) {
+                  var scale = vec3.fromValues(0.5, 4.0, 0.5);
+                  var pos2 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
+                  pos2[1] += 1.0;
+                  pos2[0] = pos2[0] + 1.5 * shape.z[0];
+                  pos2[1] = pos2[1] + 1.5 * shape.z[1];
+                  pos2[2] = pos2[2] + 1.5 * shape.z[2];
+                  pos2[0] = pos2[0] - 0.5 * shape.x[0];
+                  pos2[1] = pos2[1] - 0.5 * shape.x[1];
+                  pos2[2] = pos2[2] - 0.5 * shape.x[2];
+                  this.shapeSet.add(new Shape('F', pos2, shape.rotation, scale, shape.material, shape.x, shape.z, false));
             }
       }
 
@@ -230,6 +356,31 @@ export default class ShapeGrammar {
             }
       }
 
+      parseC = function (shape: Shape) {
+            var rando = Math.random();
+
+            var prob1;
+            var prob2;
+            var prob3;
+            var t = (shape.position[2] + 40.0) / 80.0;
+
+            prob1 = 0.8 * (1 - t) + 0.2 * t;
+            prob2 = prob1 / 2.0;
+            prob3 = prob1 + (1 - prob1) / 2.0;
+
+            if (rando < prob2) {
+                  this.modif7(shape);
+            }
+            else if (rando < prob1) {
+                  this.modif8(shape);
+            }
+            else if (rando < prob3) {
+                  this.modif9(shape);
+            }
+            else {
+                  this.modif10(shape);
+            }
+      }
 
       doIterations = function (it: number, pos: vec3, rot: vec3, scale: vec3,
             mat: string, xaxis: vec3, zaxis: vec3, door: boolean) {
@@ -244,22 +395,15 @@ export default class ShapeGrammar {
                   for (var i = 0; i < array.length; ++i) {
                         if (shape.symbol == 'A') {
                               this.parseA(shape);
-                        }
-                        // } else if(shape.symbol == 'B')
-                        // {
-                        // 	modif1(shape, shapeSet);
-                        // }
-                        else if (shape.symbol == 'C') {
+                        } else if(shape.symbol == 'B') {
+                        	this.modif1(shape);
+                        } else if (shape.symbol == 'C') {
                               this.parseB(shape);
+                        } else if(shape.symbol == 'D') {
+                        	this.parseC(shape);	
+                        } else if(shape.symbol == 'E') {
+                        	this.modif2(shape);
                         }
-                        // else if(shape.symbol == 'D')
-                        // {
-                        // 	parseD(shape, shapeSet);	
-                        // }
-                        // else if(shape.symbol == 'E')
-                        // {
-                        // 	modif2(shape, shapeSet);
-                        // }
                   }
             }
             return this.shapeSet;
