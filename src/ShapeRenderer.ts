@@ -14,13 +14,29 @@ export default class ShapeRenderer {
     build = function(shapeSet: Set<Shape>, citySet: City) {
         //var citySet = citySet;
         var array = Array.from(shapeSet);
+        console.log(shapeSet.size);
         if(shapeSet.size != 0) {
             for(var i = 0; i < shapeSet.size; ++i) {
+                console.log("each shape symbol:" + array[i].symbol);
                 if(array[i].symbol === 'F') {
                     var chimney = new Chimney(vec3.fromValues(0,0,0));
                     var vertices = chimney.getPos();
                     vertices = this.translateVertices(vertices, array[i].position);
-                    vertices = this.rotateVertices(vertices, array[i].rotation);
+                    if(array[i].rotation[0] > 0){
+                        var axis = vec3.fromValues(1, 0, 0); 
+                        var angle = array[i].rotation[0];
+                        vertices = this.rotateVertices(angle, axis, vertices);
+                    } 
+                    if(array[i].rotation[1] > 0) {
+                        var axis = vec3.fromValues(0, 1, 0); 
+                        var angle = array[i].rotation[1];
+                        vertices = this.rotateVertices(angle, axis, vertices);
+                    }
+                    if(array[i].rotation[2] > 0) {
+                        var axis = vec3.fromValues(0, 0, 1); 
+                        var angle = array[i].rotation[2];
+                        vertices = this.rotateVertices(angle, axis, vertices);
+                    }
                     vertices = this.scaleVertices(vertices, array[i].scale);
                     chimney.setPos(vertices);
                     citySet.addChimney(chimney);
@@ -45,17 +61,15 @@ export default class ShapeRenderer {
                     vertices = this.scaleVertices(vertices, array[i].scale);
                     door.setPos(vertices);
                     citySet.addDoor(door); 
-
                 }
                 else
                 {
-                    var chimney = new Chimney(vec3.fromValues(0,0,0));
+                    var rand = Math.random();
+                    var chimney = new Chimney(vec3.fromValues(rand,0,0));
                     var vertices = chimney.getPos();
                     vertices = this.translateVertices(vertices, array[i].position);
                     vertices = this.scaleVertices(vertices, array[i].scale);
                     citySet.addCarrot(chimney); 
-                    console.log(shapeSet.size);
-                    console.log(chimney);
                 }      
             }
         }
@@ -83,10 +97,10 @@ export default class ShapeRenderer {
         return newPositions;
     }
 
-    rotateVertices(x: number, rotation: vec3, positions: Array<number>) {
+    rotateVertices(x: number, axis: vec3, positions: Array<number>) {
 
         //only rotate by y axis
-            var rotMat = this.rotationMatrix(rotation, x);
+            var rotMat = this.rotationMatrix(axis, x);
         //matrices
 
         var newPositions = new Array<number>();

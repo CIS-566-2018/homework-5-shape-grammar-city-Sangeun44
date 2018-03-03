@@ -69,7 +69,7 @@ function main() {
   var x = vec3.fromValues(1, 0, 0);
   var z = vec3.fromValues(0, 0, 1);
   var door = false;
-  var iter = 3;
+  var iter = 8;
   var oneShape = new Shape(symbol, position, rotation, 
     scale, material, x, z, door);
   
