@@ -22,7 +22,7 @@ class Strawberry extends Drawable {
     this.normals = new Float32Array([]);
 
      //obj loader
-    this.objStr = document.getElementById('why_cylinder.obj').innerHTML;
+    this.objStr = document.getElementById('why_strawberry.obj').innerHTML;
     this.mesh = new OBJ.Mesh(this.objStr); 
 
     this.addMeshData();

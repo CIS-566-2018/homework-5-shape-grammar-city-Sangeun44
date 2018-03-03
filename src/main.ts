@@ -15,6 +15,7 @@ import ShapeGrammar from './ShapeGrammar';
 import ShapeRenderer from './ShapeRenderer';
 import Shape from './Shape';
 import Carrot from './geometry/Carrot';
+import RoadBlock from './geometry/RoadBlock';
 
 // Define an object with application parameters and button callbacks
 // This will be referred to by dat.GUI's functions that add GUI elements.
@@ -29,6 +30,7 @@ const controls = {
 
 //shapes
 let square: Square;
+let road1: RoadBlock;
 let city1: City;
 let city2: City;
 
@@ -37,6 +39,7 @@ let carrot: Carrot;
 //Shape Set maker 
 let shapeRen : ShapeRenderer;
 let shapeGram : ShapeGrammar;
+let roads : City;
 
 let iteration: number;
 let axiom: string;
@@ -47,15 +50,23 @@ let count: number = 0.0;
 
 //grammar city
 function loadScene() {
+  //ground
   square = new Square(vec3.fromValues(0,0,0));
   square.create();
-  // carrot = new Carrot(vec3.fromValues(0,0,0));
-  // carrot.create();
-  city1.create();
-  // city2.create();
+  roads.create();
+  //city1.create();
 }
 
 function main() {
+  //create roads
+  roads = new City(vec3.fromValues(i * 10, 0, 0));
+  for(var i = 0; i < 10; ++i) {
+    var road = new RoadBlock(vec3.fromValues(0,0,0));
+    var vertices = road.getPos();
+    vertices = translateVertices(vertices, vec3.fromValues(i * 10, 0,0));
+    road.setPos(vertices);
+    roads.addRoad(road);
+  }
   //Shapes
   shapeGram = new ShapeGrammar();
   shapeRen = new ShapeRenderer();
@@ -69,14 +80,16 @@ function main() {
   var x = vec3.fromValues(1, 0, 0);
   var z = vec3.fromValues(0, 0, 1);
   var door = false;
-  var iter = 8;
+  var iter = 2;
   var oneShape = new Shape(symbol, position, rotation, 
     scale, material, x, z, door);
   
   //get a set of shapes from the shapeGrammar
   city1 = new City(vec3.fromValues(0,0,0));
+  city2 = new City(vec3.fromValues(0,0,0));
   var shapeSet = shapeGram.doIterations(iter, position, rotation, scale, material, x, z, door);
   city1 = shapeRen.build(shapeSet, city1);
+  city2 = shapeRen.build(shapeSet, city2);
   //city1.create();
 
   // Initial display for framerate
@@ -109,7 +122,7 @@ function main() {
   // Initial call to load scene
   loadScene();
   
-  const camera = new Camera(vec3.fromValues(0, 0, 5), vec3.fromValues(0, 0, 0));
+  const camera = new Camera(vec3.fromValues(0, 50, 5), vec3.fromValues(0, 0, 0));
 
   const renderer = new OpenGLRenderer(canvas);
   renderer.setClearColor(0.3, 0.7, 0.9, 1);
@@ -117,6 +130,11 @@ function main() {
 
 
   const base_lambert = new ShaderProgram([
+    new Shader(gl.VERTEX_SHADER, require('./shaders/base-lambert-vert.glsl')),
+    new Shader(gl.FRAGMENT_SHADER, require('./shaders/base-lambert-frag.glsl')),
+  ]);
+
+  const road_lambert = new ShaderProgram([
     new Shader(gl.VERTEX_SHADER, require('./shaders/base-lambert-vert.glsl')),
     new Shader(gl.FRAGMENT_SHADER, require('./shaders/base-lambert-frag.glsl')),
   ]);
@@ -144,6 +162,11 @@ function main() {
 
       //renderer.render(camera, carrot_lambert, [carrot]);
       renderer.render(camera, base_lambert, [square]);
+
+      let road_color = vec4.fromValues(100/255, 240/255, 100/255, 1);
+        road_lambert.setGeometryColor(road_color);
+      renderer.render(camera, road_lambert, [roads]);
+      
       renderer.render(camera, carrot_lambert, [city1]);
       //renderer.render(camera, base_lambert, [square]);
       //tester cylinder
@@ -171,8 +194,23 @@ function main() {
 
 main();
 
-// function doRenderer(it: number, pos: vec3, rot: vec3, scale: vec3, 
-//   mat: string, xaxis : vec3, zaxis: vec3, door: boolean) {
-//   var shapeSet = shapeGram.doIterations(it, pos, rot, scale, mat, xaxis, zaxis, door);
-//   shapeRen.renderSymbols(shapeSet, citySet);
-// }
+function translateVertices(positions: Array<number>, pos : vec3) {
+  var newPositions = new Array<number>();
+  for(var i = 0; i < positions.length; i = i + 4) {
+      //input vertex x, y, z
+      var xCom = positions[i];
+      var yCom = positions[i+1];
+      var zCom = positions[i+2];
+      
+      //console.log("original: " + positions[i], positions[i+1], positions[i+2]);
+      //apply rotation in x, y, z direction to the vertex
+      var vert = vec3.fromValues(xCom + pos[0], yCom + pos[1], zCom+ pos[2]);
+
+      newPositions[i] = vert[0];
+      newPositions[i+1] = vert[1];
+      newPositions[i+2] = vert[2];
+      newPositions[i+3] = 1;
+      // console.log("rotateed Pos: " + newPositions[i], newPositions[i+1], newPositions[i+2]);
+  }
+  return newPositions;
+}

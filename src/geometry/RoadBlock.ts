@@ -5,7 +5,7 @@ import {gl} from '../globals';
 //obj
 var OBJ = require('webgl-obj-loader');
 
-class Orange extends Drawable {
+class RoadBlock extends Drawable {
   indices: Uint32Array;
   positions: Float32Array;
   normals: Float32Array;
@@ -22,7 +22,7 @@ class Orange extends Drawable {
     this.normals = new Float32Array([]);
 
      //obj loader
-    this.objStr = document.getElementById('why_orange.obj').innerHTML;
+    this.objStr = document.getElementById('why_roadblock.obj').innerHTML;
     this.mesh = new OBJ.Mesh(this.objStr); 
 
     this.addMeshData();
@@ -63,7 +63,7 @@ class Orange extends Drawable {
     for(var i = 0; i < this.mesh.vertexNormals.length; i = i + 3) {
         objNorm.push(this.mesh.vertexNormals[i] );
         objNorm.push(this.mesh.vertexNormals[i+1]); 
-        objNorm.push(this.mesh.vertexNormals[i+2] );
+        objNorm.push(this.mesh.vertexNormals[i+2]);
         objNorm.push(0);
     }  
 
@@ -95,8 +95,8 @@ class Orange extends Drawable {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.bufPos);
     gl.bufferData(gl.ARRAY_BUFFER, this.positions, gl.STATIC_DRAW);
 
-    console.log(`Created cylinder`);
+    console.log(`Created roadBlock`);
   }
 };
 
-export default Orange;
+export default RoadBlock;

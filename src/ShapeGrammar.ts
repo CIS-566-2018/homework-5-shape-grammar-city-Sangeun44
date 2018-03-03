@@ -173,6 +173,59 @@ export default class ShapeGrammar {
             }
       }
 
+      //add half sized shape to left side of parent shape
+      modif1 = function (shape: Shape) {
+            if (this.shapeSet.size != 0) {
+                  var scale1 = vec3.fromValues(shape.scale[0], shape.scale[1], shape.scale[2]);
+                  scale1[0] *= 0.5;
+                  scale1[1] *= 0.75;
+                  scale1[2] *= 0.5;
+                  var pos1 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
+                  pos1[0] = pos1[0] + 1.75 * shape.z[0];
+                  pos1[1] = pos1[1] + 1.75 * shape.z[1];
+                  pos1[2] = pos1[2] + 1.75 * shape.z[2];
+                  pos1[1] -= 0.25;
+                  this.shapeSet.add(new Shape('T', pos1, shape.rotation, scale1, shape.material, shape.x, shape.z, false));
+
+                  var scale = vec3.fromValues(0.5, 1.0, 0.1);
+                  var pos2 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
+                  pos2[0] = pos2[0] + 2.4 * shape.z[0];
+                  pos2[1] = pos2[1] + 2.4 * shape.z[1];
+                  pos2[2] = pos2[2] + 2.4 * shape.z[2];
+                  pos2[1] -= 0.5;
+                  pos2[0] = pos2[0] + .15 * shape.x[0];
+                  pos2[1] = pos2[1] + .15 * shape.x[1];
+                  pos2[2] = pos2[2] + .15 * shape.x[2];
+                  this.shapeSet.add(new Shape('G', pos2, shape.rotation, scale, shape.material, shape.x, shape.z, false));
+            }
+      }
+
+      //add half sized shape to right side of parent shape
+      modif2 = function (shape: Shape) {
+            if (this.shapeSet.size != 0) {
+                  var scale1 = vec3.fromValues(shape.scale[0], shape.scale[1], shape.scale[2]);
+                  scale1[0] *= 0.5;
+                  scale1[1] *= 0.75;
+                  scale1[2] *= 0.5;
+                  var pos1 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
+                  pos1[0] = pos1[0] - 1.75 * shape.z[0];
+                  pos1[1] = pos1[1] - 1.75 * shape.z[1];
+                  pos1[2] = pos1[2] - 1.75 * shape.z[2];
+                  pos1[1] -= 0.25;
+                  this.shapeSet.add(new Shape('T', pos1, shape.rotation, scale1, shape.material, shape.x, shape.z, false));
+
+                  var scale = vec3.fromValues(0.5, 1.0, 0.1);
+                  var pos2 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
+                  pos2[0] = pos2[0] - 2.4 * shape.z[0];
+                  pos2[1] = pos2[1] - 2.4 * shape.z[1];
+                  pos2[2] = pos2[2] - 2.4 * shape.z[2];
+                  pos2[0] = pos2[0] + .15 * shape.x[0];
+                  pos2[1] = pos2[1] + .15 * shape.x[1];
+                  pos2[2] = pos2[2] + .15 * shape.x[2];
+                  pos2[1] -= 0.5;
+                  this.shapeSet.add(new Shape('G', pos2, shape.rotation, scale, shape.material, shape.x, shape.z, false));
+            }
+      }
       //remove this shape returning empty set
       modif3 = function (shape: Shape) {
             if (this.shapeSet.size != 0) {
@@ -338,7 +391,7 @@ export default class ShapeGrammar {
             }
       }
 
-      parseB = function (shape: Shape) {
+      parseC = function (shape: Shape) {
             var rand = Math.random();
             var tilt = (shape.position[2] + 40.0) / 80.0;
 
@@ -356,7 +409,7 @@ export default class ShapeGrammar {
             }
       }
 
-      parseC = function (shape: Shape) {
+      parseD = function (shape: Shape) {
             var rando = Math.random();
 
             var prob1;
@@ -395,14 +448,14 @@ export default class ShapeGrammar {
                   for (var i = 0; i < array.length; ++i) {
                         if (shape.symbol == 'A') {
                               this.parseA(shape);
-                        } else if(shape.symbol == 'B') {
-                        	this.modif1(shape);
+                        } else if (shape.symbol == 'B') {
+                              this.modif1(shape);
                         } else if (shape.symbol == 'C') {
-                              this.parseB(shape);
-                        } else if(shape.symbol == 'D') {
-                        	this.parseC(shape);	
-                        } else if(shape.symbol == 'E') {
-                        	this.modif2(shape);
+                              this.parseC(shape);
+                        } else if (shape.symbol == 'D') {
+                              this.parseD(shape);
+                        } else if (shape.symbol == 'E') {
+                              this.modif2(shape);
                         }
                   }
             }
