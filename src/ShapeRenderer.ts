@@ -64,11 +64,12 @@ export default class ShapeRenderer {
                     citySet.addDoor(door); 
                 } else {
                     console.log("carrot:");
-                    var rand = Math.random() + 20;
+                    //var rand = Math.random() + 20;
                     var carrot = new Carrot(vec3.fromValues(0, 0, 0));
                     var vertices = carrot.getPos();
-                    vertices = this.translateVertices(vertices, vec3.fromValues(array[i].position[0] + i, array[i].position[1], array[i].position[2] + i));
+                    vertices = this.translateVertices(vertices, array[i].position);
                     vertices = this.scaleVertices(vertices, array[i].scale);
+                    //carrot.setPos(vertices);
                     citySet.addCarrot(carrot); 
                 }      
             }

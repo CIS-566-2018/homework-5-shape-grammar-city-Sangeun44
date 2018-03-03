@@ -2,7 +2,6 @@ import { vec3, vec4, mat4 } from 'gl-matrix';
 import { gl } from './globals';
 import Shape from './Shape';
 
-
 export default class ShapeGrammar {
       axiom: string;
       shapeSet: Set<Shape>;
@@ -31,7 +30,7 @@ export default class ShapeGrammar {
                   pos2[1] = pos2[1] - 0.75 * shape.x[1];
                   pos2[2] = pos2[2] - 0.75 * shape.x[2];
 
-                  var rand = Math.random(); //
+                  var rand = Math.random(); 
                   if (rand < 0.5) {
                         pos2[0] = pos2[0] - 1.0 * shape.z[0];
                         pos2[1] = pos2[1] - 1.0 * shape.z[1];

@@ -31,14 +31,14 @@ void main()
 {
     // Material base color (before shading)
         vec4 diffuseColor = u_Color;
-        vec4 avg = (fs_LightVec + vec4(u_Eye.xyz, 0.f)) / 2.f;
-        float specularIntensity;
+        // vec4 avg = (fs_LightVec + vec4(u_Eye.xyz, 0.f)) / 2.f;
+        // float specularIntensity;
 
-        if(dot(fs_LightVec, fs_Nor) < 0.f) {
-            specularIntensity = 0.5f;
-        } else {
-            specularIntensity = max(pow(dot(normalize(avg), normalize(fs_Nor)), 9.f), 0.f);
-        }
+        // if(dot(fs_LightVec, fs_Nor) < 0.f) {
+        //     specularIntensity = 0.5f;
+        // } else {
+        //     specularIntensity = max(pow(dot(normalize(avg), normalize(fs_Nor)), 9.f), 0.f);
+        // }
         
         // Calculate the diffuse term for Lambert shading
         float diffuseTerm = dot(normalize(fs_Nor), normalize(fs_LightVec));

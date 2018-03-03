@@ -1,4 +1,4 @@
-import {vec3, vec4} from 'gl-matrix';
+import {vec3, vec4, mat4} from 'gl-matrix';
 import * as Stats from 'stats-js';
 import * as DAT from 'dat-gui';
 
@@ -54,16 +54,17 @@ function loadScene() {
   square = new Square(vec3.fromValues(0,0,0));
   square.create();
   roads.create();
-  //city1.create();
+  city1.create();
 }
 
 function main() {
   //create roads
   roads = new City(vec3.fromValues(i * 10, 0, 0));
-  for(var i = 0; i < 10; ++i) {
+  for(var i = 0; i < 20; ++i) {
     var road = new RoadBlock(vec3.fromValues(0,0,0));
     var vertices = road.getPos();
-    vertices = translateVertices(vertices, vec3.fromValues(i * 10, 0,0));
+    vertices = rotateVertices(9, vec3.fromValues(0,1,0), vertices);
+    vertices = translateVertices(vertices, vec3.fromValues(i * 10 - 90, 0,0));
     road.setPos(vertices);
     roads.addRoad(road);
   }
@@ -73,9 +74,9 @@ function main() {
 
   //let's start the chain
   var symbol = "A";
-  var position = vec3.fromValues(0,3,0);
-  var rotation = vec3.fromValues(0,0,0);
-  var scale = vec3.fromValues(0, 0, 0);
+  var position = vec3.fromValues(0,70,0);
+  var rotation = vec3.fromValues(0,1,0);
+  var scale = vec3.fromValues(0, 1, 0);
   var material = "carrot";
   var x = vec3.fromValues(1, 0, 0);
   var z = vec3.fromValues(0, 0, 1);
@@ -86,10 +87,10 @@ function main() {
   
   //get a set of shapes from the shapeGrammar
   city1 = new City(vec3.fromValues(0,0,0));
-  city2 = new City(vec3.fromValues(0,0,0));
+  //city2 = new City(vec3.fromValues(0,0,0));
   var shapeSet = shapeGram.doIterations(iter, position, rotation, scale, material, x, z, door);
   city1 = shapeRen.build(shapeSet, city1);
-  city2 = shapeRen.build(shapeSet, city2);
+  //city2 = shapeRen.build(shapeSet, city2);
   //city1.create();
 
   // Initial display for framerate
@@ -122,12 +123,11 @@ function main() {
   // Initial call to load scene
   loadScene();
   
-  const camera = new Camera(vec3.fromValues(0, 50, 5), vec3.fromValues(0, 0, 0));
+  const camera = new Camera(vec3.fromValues(0, 500, 5), vec3.fromValues(0, 0, 0));
 
   const renderer = new OpenGLRenderer(canvas);
   renderer.setClearColor(0.3, 0.7, 0.9, 1);
   gl.enable(gl.DEPTH_TEST);
-
 
   const base_lambert = new ShaderProgram([
     new Shader(gl.VERTEX_SHADER, require('./shaders/base-lambert-vert.glsl')),
@@ -210,7 +210,70 @@ function translateVertices(positions: Array<number>, pos : vec3) {
       newPositions[i+1] = vert[1];
       newPositions[i+2] = vert[2];
       newPositions[i+3] = 1;
-      // console.log("rotateed Pos: " + newPositions[i], newPositions[i+1], newPositions[i+2]);
+      //console.log("translated Pos: " + newPositions[i], newPositions[i+1], newPositions[i+2]);
   }
   return newPositions;
 }
+
+function rotateVertices(x: number, axis: vec3, positions: Array<number>) {
+
+  //only rotate by y axis
+      var rotMat = rotationMatrix(axis, x);
+  //matrices
+
+  var newPositions = new Array<number>();
+  for(var i = 0; i < positions.length; i = i + 4) {
+      //input vertex x, y, z
+      var xCom = positions[i];
+      var yCom = positions[i+1];
+      var zCom = positions[i+2];
+      
+      //console.log("original: " + positions[i], positions[i+1], positions[i+2]);
+      //apply rotation in x, y, z direction to the vertex
+      var vert = vec3.fromValues(xCom, yCom, zCom);
+      vec3.transformMat4(vert, vert, rotMat);           
+
+      newPositions[i] = vert[0];
+      newPositions[i+1] = vert[1];
+      newPositions[i+2] = vert[2];
+      newPositions[i+3] = 1;
+      //console.log("rotateed Pos: " + newPositions[i], newPositions[i+1], newPositions[i+2]);
+
+  }
+
+  return newPositions;
+}
+
+function scaleVertices(positions : Array<number>, scale: vec3) {
+  var newPositions = new Array<number>();
+  for(var i = 0; i < positions.length; i = i + 4) {
+      //input vertex x, y, z
+      var xCom = positions[i];
+      var yCom = positions[i+1];
+      var zCom = positions[i+2];
+      
+      //console.log("original: " + positions[i], positions[i+1], positions[i+2]);
+      //apply rotation in x, y, z direction to the vertex
+      var vert = vec3.fromValues(xCom * scale[0], yCom * scale[1], zCom * scale[2]);
+
+      newPositions[i] = vert[0];
+      newPositions[i+1] = vert[1];
+      newPositions[i+2] = vert[2];
+      newPositions[i+3] = 1;
+      //console.log("rotateed Pos: " + newPositions[i], newPositions[i+1], newPositions[i+2]);
+  }
+  return newPositions;
+}
+
+
+function rotationMatrix (axis : vec3 , angle:number) {
+axis = vec3.normalize(axis, axis);
+var s = Math.sin(angle);
+var c = Math.cos(angle);
+var oc = 1.0 - c;
+
+return mat4.fromValues(oc * axis[0] * axis[0] + c,           oc * axis[0] * axis[1] - axis[2] * s,  oc * axis[2] * axis[0] + axis[1] * s,  0.0,
+          oc * axis[0] * axis[1] + axis[2] * s,  oc * axis[1] * axis[1] + c,           oc * axis[1] * axis[2] - axis[0] * s,  0.0,
+          oc * axis[2] * axis[0] - axis[1] * s,  oc * axis[1] * axis[2] + axis[0] * s,  oc * axis[2] * axis[2] + c,           0.0,
+          0.0,                                0.0,                                0.0,                                1.0);
+}  
