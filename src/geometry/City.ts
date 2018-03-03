@@ -3,6 +3,7 @@ import Drawable from '../rendering/gl/Drawable';
 import {gl} from '../globals';
 import Carrot from './Carrot';
 import Chimney from './Chimney';
+import Door from './Door';
 
 class City extends Drawable {
     indices: Uint32Array;
@@ -93,6 +94,40 @@ class City extends Drawable {
     objNorm = carrot.getNorm();
     var objPos = new Array<number>();
     objPos = carrot.getPos();
+
+    for(var i = 0; i < objPos.length; ++i) {
+      this.pos.push(objPos[i]);
+      // console.log("pos:" + objPos[i]);
+    } 
+    for(var i = 0; i < objNorm.length; ++i) {
+      this.norm.push(objNorm[i]);
+      // console.log("norms:" + objNorm[i]);
+    } 
+    var lastInd = 0;
+    if(this.ind.length > 0) {
+      var max = this.indexOfMax(this.ind);
+      var maxE = this.ind[max];
+      // var ind2 = this.ind;
+      // ind2.sort(function(a, b){return b - a});
+       lastInd = maxE + 1;
+    } 
+    // console.log("beg Ind: " + lastInd);
+    for(var i = 0; i < objInd.length; ++i) {
+      // console.log("index: " + lastInd);
+      // console.log("index num: " + objInd.length);
+      this.ind.push(objInd[i] + lastInd);
+      // console.log("ind:" + objInd[i]);
+    }
+
+  }
+
+  addDoor(door : Door) {
+    var objInd = new Array<number>();
+    objInd = door.getInd();
+    var objNorm = new Array<number>();
+    objNorm = door.getNorm();
+    var objPos = new Array<number>();
+    objPos = door.getPos();
 
     for(var i = 0; i < objPos.length; ++i) {
       this.pos.push(objPos[i]);

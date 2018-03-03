@@ -4,22 +4,17 @@ import * as DAT from 'dat-gui';
 
 import Square from './geometry/Square';
 import City from './geometry/City';
-import Base from './geometry/Base';
 
 import OpenGLRenderer from './rendering/gl/OpenGLRenderer';
 import Camera from './Camera';
 import {setGL} from './globals';
 import ShaderProgram, {Shader} from './rendering/gl/ShaderProgram';
-//import * as fs from 'fs';
-
-//l-sys
-import Lsystem from './lsystem';
-
-//turtle
-import Turtle from './turtle';
 
 //shapeGrammar
 import ShapeGrammar from './ShapeGrammar';
+import ShapeRenderer from './ShapeRenderer';
+import Shape from './Shape';
+import Carrot from './geometry/Carrot';
 
 // Define an object with application parameters and button callbacks
 // This will be referred to by dat.GUI's functions that add GUI elements.
@@ -36,7 +31,12 @@ const controls = {
 let square: Square;
 let city1: City;
 let city2: City;
-let base: Base;
+
+let carrot: Carrot;
+
+//Shape Set maker 
+let shapeRen : ShapeRenderer;
+let shapeGram : ShapeGrammar;
 
 let iteration: number;
 let axiom: string;
@@ -46,30 +46,36 @@ let height: number;
 let count: number = 0.0;
 
 //grammar city
-
 function loadScene() {
-  base = new Base(vec3.fromValues(0,0,0));
-  base.create();
   square = new Square(vec3.fromValues(0,0,0));
   square.create();
+  // city1.create();
+  // city2.create();
   city1.create();
-  city2.create();
 }
 
 function main() {
-    //lsystem
-    //axiom = "FFFFFFFFFFX";
-    height = controls.randomize;
-    iteration = controls.iterations;
-    var lsys = new Lsystem(axiom, iteration);
-    var path = lsys.createPath(); //create string path
+  //Shapes
+  shapeGram = new ShapeGrammar();
+  shapeRen = new ShapeRenderer();
 
-    city1 = new City(vec3.fromValues(0,0,0));
-    city2 = new City(vec3.fromValues(0,0,0));
-     //turle action
-    var turtle = new Turtle(city1, city2, path, height);
-    turtle.draw();
-    
+  //let's start the chain
+  var symbol = "A";
+  var position = vec3.fromValues(0,3,0);
+  var rotation = vec3.fromValues(0,0,0);
+  var scale = vec3.fromValues(0, 0, 0);
+  var material = "carrot";
+  var x = vec3.fromValues(1, 0, 0);
+  var z = vec3.fromValues(0, 0, 1);
+  var door = false;
+  var iter = 2;
+  var oneShape = new Shape(symbol, position, rotation, 
+    scale, material, x, z, door);
+  
+  //get a set of shapes from the shapeGrammar
+  var shapeSet = shapeGram.doIterations(iter, position, rotation, scale, material, x, z, door);
+  var city1 = shapeRen.build(shapeSet, city1);
+
   // Initial display for framerate
   const stats = Stats();
   stats.setMode(0);
@@ -100,96 +106,40 @@ function main() {
   // Initial call to load scene
   loadScene();
   
-  const camera = new Camera(vec3.fromValues(-1000, 500, -1000), vec3.fromValues(0, 0, 0));
+  const camera = new Camera(vec3.fromValues(0, 0, 5), vec3.fromValues(0, 0, 0));
 
   const renderer = new OpenGLRenderer(canvas);
   renderer.setClearColor(0.3, 0.7, 0.9, 1);
   gl.enable(gl.DEPTH_TEST);
 
-  const vertex = new ShaderProgram([
-    new Shader(gl.VERTEX_SHADER, require('./shaders/vertex-vert.glsl')),
-    new Shader(gl.FRAGMENT_SHADER, require('./shaders/vertex-frag.glsl')),
-  ]);
-
-  const tree_lambert = new ShaderProgram([
-    new Shader(gl.VERTEX_SHADER, require('./shaders/lambert-vert.glsl')),
-    new Shader(gl.FRAGMENT_SHADER, require('./shaders/lambert-frag.glsl')),
-  ]);
 
   const base_lambert = new ShaderProgram([
     new Shader(gl.VERTEX_SHADER, require('./shaders/base-lambert-vert.glsl')),
     new Shader(gl.FRAGMENT_SHADER, require('./shaders/base-lambert-frag.glsl')),
   ]);
 
-  const water_shader = new ShaderProgram([
-    new Shader(gl.VERTEX_SHADER, require('./shaders/water-shader-vert.glsl')),
-    new Shader(gl.FRAGMENT_SHADER, require('./shaders/water-shader-frag.glsl')),
+  const carrot_lambert = new ShaderProgram([
+    new Shader(gl.VERTEX_SHADER, require('./shaders/carrot-lambert-vert.glsl')),
+    new Shader(gl.FRAGMENT_SHADER, require('./shaders/carrot-lambert-frag.glsl')),
   ]);
-
-  var it = controls.iterations;
-  var ta = controls.randomize;
-  console.log("height: " + ta);
 
   // This function will be called every frame
   function tick() {
     
-    //U_tIME
-    count++;
-    vertex.setTime(count)
+    //U_time
+    // count++;
+    // vertex.setTime(count)
     
-    let new_color = vec4.fromValues(controls.color[0]/255, controls.color[1]/255, controls.color[2]/255, 1);
-    let base_color = vec4.fromValues(64/255, 255/255, 255/255, 1);
-      tree_lambert.setGeometryColor(new_color);  
-      base_lambert.setGeometryColor(base_color);
+    let carrot_color = vec4.fromValues(250/255, 120/255, 0/255, 1);
+      carrot_lambert.setGeometryColor(carrot_color);
       camera.update();
       stats.begin();
-
-      var height = controls.randomize;
-      if(ta !== height) {
-        var lsys = new Lsystem(axiom, iteration);
-        var path = lsys.createPath(); //create string path
-
-        city1 = new City(vec3.fromValues(0,0,0));
-        city2 = new City(vec3.fromValues(0,0,0));
-
-        //turle action
-       var turtle = new Turtle(city1, city2, path, height);
-       turtle.draw();
-   
-       city1.create();
-       city2.create();
-
-       ta = height;
-       console.log("height: " + ta);
-      }
-
-      //change in tree
-      iteration = controls.iterations;
-      if(it !== iteration){
-       //lsystem
-        var lsys = new Lsystem(axiom, iteration);
-        var path = lsys.createPath(); //create string path
-        console
-        city1 = new City(vec3.fromValues(0,0,0));
-        city2 = new City(vec3.fromValues(0,0,0));
-
-        //turle action
-        var turtle = new Turtle(city1, city2, path, height);
-        turtle.draw();
-        
-        city1.create();
-        city2.create();
-      }
-      it = iteration;
 
       gl.viewport(0, 0, window.innerWidth, window.innerHeight);
       renderer.clear();
 
-      //renderer.render(camera, tree_lambert, [flower]);
-      renderer.render(camera, tree_lambert, [city1]);
-      renderer.render(camera, vertex, [city2]);
-      renderer.render(camera, tree_lambert, [base]);
-      base_lambert.setGeometryColor(base_color);
+      renderer.render(camera, carrot_lambert, [carrot]);
+      renderer.render(camera, carrot_lambert, [city1]);
       //renderer.render(camera, base_lambert, [square]);
       //tester cylinder
       //renderer.render(camera, tree_lambert, [flower]);
@@ -216,7 +166,8 @@ function main() {
 
 main();
 
-function doLsystem(sg : ShapeGrammar, it: n, turtle, pos, rot, xax, zax) {
-  var result = lsystem.doIterations(iterations, pos, rot, new THREE.Vector3(2.0, 1.0, 1.0), getMaterial(), xax, zax, false);
-  turtle.renderSymbols(result);
-}
+// function doRenderer(it: number, pos: vec3, rot: vec3, scale: vec3, 
+//   mat: string, xaxis : vec3, zaxis: vec3, door: boolean) {
+//   var shapeSet = shapeGram.doIterations(it, pos, rot, scale, mat, xaxis, zaxis, door);
+//   shapeRen.renderSymbols(shapeSet, citySet);
+// }

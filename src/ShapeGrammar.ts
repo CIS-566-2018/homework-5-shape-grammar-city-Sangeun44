@@ -49,30 +49,29 @@ export default class ShapeGrammar {
 
       parseA = function(shape: Shape) {
             var rand = Math.random();
-
             if(rand < 0.2) {
-                  this.config1(shape, this.shapeSet);
+                  this.config1(shape);
             }
             // } else if(rand < 0.6) {
             //       this.config2(shape, this.shapeSet);
             // } else {
             //       this.config3(shape, this.shapeSet);
             // }
-
       }
 
       doIterations = function(it: number, pos: vec3, rot: vec3, scale: vec3, 
                         mat: string, xaxis : vec3, zaxis: vec3, door: boolean) {
-            
+
             this.shapeSet.clear();
             var shape = new Shape('A', pos, rot, scale, mat, xaxis, zaxis, door);
             this.shapeSet.add(shape);
 
             for(var i = 0; i < it; ++i) {
                   var temp = this.shapeSet;
-                  temp.forEach(function(shape: Shape) {
+                  var array = Array.from(temp);
+                  for(var i = 0; i < array.length; ++i) {
                         if(shape.symbol == 'A') {
-                              this.parseA(shape, this.shapeSet);
+                              this.parseA(shape);
                         }
                         // } else if(shape.symbol == 'B')
 				// {
@@ -90,7 +89,7 @@ export default class ShapeGrammar {
 				// {
 				// 	modif2(shape, shapeSet);
 				// }
-                  });
+                  }
             }
             return this.shapeSet;
       }

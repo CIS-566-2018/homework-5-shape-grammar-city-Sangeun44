@@ -10,8 +10,7 @@ export default class Shape {
     z : vec3;
     door : boolean;
 
-    constructor(symbol: string, position: vec3, rotation: vec3, 
-                scale: vec3, material: string, x: vec3, z: vec3, door: boolean) {
+    constructor(symbol: string, position: vec3, rotation: vec3, scale: vec3, material: string, x: vec3, z: vec3, door: boolean) {
         this.symbol = symbol;
         this.position = position;
         this.rotation = rotation;
