@@ -49,9 +49,10 @@ let count: number = 0.0;
 function loadScene() {
   square = new Square(vec3.fromValues(0,0,0));
   square.create();
-  // city1.create();
-  // city2.create();
+  // carrot = new Carrot(vec3.fromValues(0,0,0));
+  // carrot.create();
   city1.create();
+  // city2.create();
 }
 
 function main() {
@@ -68,13 +69,15 @@ function main() {
   var x = vec3.fromValues(1, 0, 0);
   var z = vec3.fromValues(0, 0, 1);
   var door = false;
-  var iter = 2;
+  var iter = 3;
   var oneShape = new Shape(symbol, position, rotation, 
     scale, material, x, z, door);
   
   //get a set of shapes from the shapeGrammar
+  city1 = new City(vec3.fromValues(0,0,0));
   var shapeSet = shapeGram.doIterations(iter, position, rotation, scale, material, x, z, door);
-  var city1 = shapeRen.build(shapeSet, city1);
+  city1 = shapeRen.build(shapeSet, city1);
+  //city1.create();
 
   // Initial display for framerate
   const stats = Stats();
@@ -129,7 +132,8 @@ function main() {
     //U_time
     // count++;
     // vertex.setTime(count)
-    
+    let base_color = vec4.fromValues(50/255, 240/255, 100/255, 1);
+      base_lambert.setGeometryColor(base_color);
     let carrot_color = vec4.fromValues(250/255, 120/255, 0/255, 1);
       carrot_lambert.setGeometryColor(carrot_color);
       camera.update();
@@ -138,7 +142,8 @@ function main() {
       gl.viewport(0, 0, window.innerWidth, window.innerHeight);
       renderer.clear();
 
-      renderer.render(camera, carrot_lambert, [carrot]);
+      //renderer.render(camera, carrot_lambert, [carrot]);
+      renderer.render(camera, base_lambert, [square]);
       renderer.render(camera, carrot_lambert, [city1]);
       //renderer.render(camera, base_lambert, [square]);
       //tester cylinder

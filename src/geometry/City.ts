@@ -122,6 +122,8 @@ class City extends Drawable {
   }
 
   addDoor(door : Door) {
+        console.log(this.indices.length);
+
     var objInd = new Array<number>();
     objInd = door.getInd();
     var objNorm = new Array<number>();
@@ -152,7 +154,6 @@ class City extends Drawable {
       this.ind.push(objInd[i] + lastInd);
       // console.log("ind:" + objInd[i]);
     }
-
   }
 
   create() {
@@ -174,7 +175,7 @@ class City extends Drawable {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.bufPos);
     gl.bufferData(gl.ARRAY_BUFFER, this.positions, gl.STATIC_DRAW);
 
-    console.log(`Created Shape`);
+    console.log(`Created City`);
   }
 };
 

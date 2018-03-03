@@ -3,24 +3,27 @@ import Shape from './Shape';
 import City from './geometry/City';
 import Door from './geometry/Door';
 import Carrot from './geometry/Carrot';
+import Chimney from './geometry/Chimney';
 
 export default class ShapeRenderer {
     shapeSet : Set<Shape>;
-    citySet : City;
     
     constructor() {
-        this.citySet = new City(vec3.fromValues(0,0,0));
     } 
 
     build = function(shapeSet: Set<Shape>, citySet: City) {
         //var citySet = citySet;
-
         var array = Array.from(shapeSet);
-        console.log(array[0]);
         if(shapeSet.size != 0) {
             for(var i = 0; i < shapeSet.size; ++i) {
                 if(array[i].symbol === 'F') {
-                    
+                    var chimney = new Chimney(vec3.fromValues(0,0,0));
+                    var vertices = chimney.getPos();
+                    vertices = this.translateVertices(vertices, array[i].position);
+                    vertices = this.rotateVertices(vertices, array[i].rotation);
+                    vertices = this.scaleVertices(vertices, array[i].scale);
+                    chimney.setPos(vertices);
+                    citySet.addChimney(chimney);
                 } else if(array[i].symbol == 'G') {
                     var mat;
                     var rand = Math.random();
@@ -40,15 +43,19 @@ export default class ShapeRenderer {
                     var vertices = door.getPos();
                     vertices = this.translateVertices(vertices, array[i].position);
                     vertices = this.scaleVertices(vertices, array[i].scale);
+                    door.setPos(vertices);
                     citySet.addDoor(door); 
+
                 }
                 else
                 {
-                    var carrot = new Carrot(vec3.fromValues(0,0,0));
-                    var vertices = carrot.getPos();
+                    var chimney = new Chimney(vec3.fromValues(0,0,0));
+                    var vertices = chimney.getPos();
                     vertices = this.translateVertices(vertices, array[i].position);
                     vertices = this.scaleVertices(vertices, array[i].scale);
-                    citySet.addCarrot(carrot); 
+                    citySet.addCarrot(chimney); 
+                    console.log(shapeSet.size);
+                    console.log(chimney);
                 }      
             }
         }
