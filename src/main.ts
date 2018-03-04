@@ -78,7 +78,9 @@ function main() {
   shapeGram = new ShapeGrammar();
   shapeRen = new ShapeRenderer();
 
-  for (var i = 0; i < 4; ++i) {
+  var carrots = new Set<Carrot>();
+
+  for (var i = 0; i < 1; ++i) {
     //let's start the chain
     var symbol = "A";
     var position = vec3.fromValues(0, i, 0);

@@ -67,10 +67,16 @@ export default class ShapeRenderer {
                     //var rand = Math.random() + 20;
                     var carrot = new Carrot(vec3.fromValues(0, 0, 0));
                     var vertices = carrot.getPos();
-                    vertices = this.translateVertices(vertices, array[i].position);
+                    console.log("prev: " + vertices[1]);
+                    console.log("position: " + array[i].position);
                     vertices = this.scaleVertices(vertices, array[i].scale);
-                    //carrot.setPos(vertices);
+                    console.log("scale: " +  array[i].scale + " " + vertices[1]);
+                    vertices = this.translateVertices(vertices, array[i].position);
+                    console.log("translate: " + array[i].position + " " + vertices[1]);
+                    carrot.setPos(vertices);
+                    console.log("next: " + vertices[1]);
                     citySet.addCarrot(carrot); 
+                    console.log("indices: " + citySet.ind.length);
                 }      
             }
         }
