@@ -50,7 +50,7 @@ export default class ShapeGrammar {
       config2 = function (shape: Shape) {
             if (this.shapeSet.size != 0) {
                   var scale1 = vec3.fromValues(shape.scale[0], shape.scale[1], shape.scale[2]);
-                  scale1[0] *= 0.5;
+                  //scale1[0] *= 0.5;
                   var pos1 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
                   pos1[0] = pos1[0] - 0.75 * shape.x[0];
                   pos1[1] = pos1[1] - 0.75 * shape.x[1];
@@ -177,7 +177,7 @@ export default class ShapeGrammar {
             if (this.shapeSet.size != 0) {
                   var scale1 = vec3.fromValues(shape.scale[0], shape.scale[1], shape.scale[2]);
                   scale1[0] *= 0.5;
-                  scale1[1] *= 0.75;
+                  scale1[1] *= 0.9;
                   scale1[2] *= 0.5;
                   var pos1 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
                   pos1[0] = pos1[0] + 1.75 * shape.z[0];

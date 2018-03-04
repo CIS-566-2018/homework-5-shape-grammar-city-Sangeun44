@@ -4,6 +4,8 @@ import City from './geometry/City';
 import Door from './geometry/Door';
 import Carrot from './geometry/Carrot';
 import Chimney from './geometry/Chimney';
+import Banana from './geometry/Banana';
+import CarrotTop from './geometry/CarrotTop';
 
 export default class ShapeRenderer {
     shapeSet : Set<Shape>;
@@ -62,21 +64,30 @@ export default class ShapeRenderer {
                     vertices = this.scaleVertices(vertices, array[i].scale);
                     door.setPos(vertices);
                     citySet.addDoor(door); 
+                } else if(array[i].symbol == 'B'){
+                        console.log("carrot:");
+                        var carrot = new Chimney(vec3.fromValues(0, 0, 0));
+                        var vertices = carrot.getPos();
+                        vertices = this.scaleVertices(vertices, array[i].scale);
+                        vertices = this.rotateVertices(90, vec3.fromValues(0,1,0), vertices);
+                        vertices = this.translateVertices(vertices, array[i].position);
+                        carrot.setPos(vertices);
+                        citySet.addCarrot(carrot); 
                 } else {
-                    console.log("carrot:");
-                    //var rand = Math.random() + 20;
-                    var carrot = new Carrot(vec3.fromValues(0, 0, 0));
-                    var vertices = carrot.getPos();
-                    console.log("prev: " + vertices[1]);
-                    console.log("position: " + array[i].position);
-                    vertices = this.scaleVertices(vertices, array[i].scale);
-                    console.log("scale: " +  array[i].scale + " " + vertices[1]);
-                    vertices = this.translateVertices(vertices, array[i].position);
-                    console.log("translate: " + array[i].position + " " + vertices[1]);
-                    carrot.setPos(vertices);
-                    console.log("next: " + vertices[1]);
-                    citySet.addCarrot(carrot); 
-                    console.log("indices: " + citySet.ind.length);
+                    var rand = Math.random();
+                        console.log("carrot:");
+                        var carrot = new Carrot(vec3.fromValues(0, 0, 0));
+                        var vertices = carrot.getPos();
+                        console.log("prev: " + vertices[1]);
+                        console.log("position: " + array[i].position);
+                        vertices = this.scaleVertices(vertices, array[i].scale);
+                        console.log("scale: " +  array[i].scale + " " + vertices[1]);
+                        vertices = this.translateVertices(vertices, array[i].position);
+                        console.log("translate: " + array[i].position + " " + vertices[1]);
+                        carrot.setPos(vertices);
+                        console.log("next: " + vertices[1]);
+                        citySet.addCarrot(carrot); 
+                        console.log("indices: " + citySet.ind.length);
                 }      
             }
         }

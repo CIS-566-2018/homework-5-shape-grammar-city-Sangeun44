@@ -1,4 +1,4 @@
-import { vec3, vec4, mat4 } from 'gl-matrix';
+import { vec2, vec3, vec4, mat4 } from 'gl-matrix';
 import * as Stats from 'stats-js';
 import * as DAT from 'dat-gui';
 
@@ -15,7 +15,10 @@ import ShapeGrammar from './ShapeGrammar';
 import ShapeRenderer from './ShapeRenderer';
 import Shape from './Shape';
 import Carrot from './geometry/Carrot';
+import CarrotTop from './geometry/CarrotTop';
 import RoadBlock from './geometry/RoadBlock';
+import Grass from './geometry/Grass';
+import Flower from './geometry/Flower';
 
 // Define an object with application parameters and button callbacks
 // This will be referred to by dat.GUI's functions that add GUI elements.
@@ -30,8 +33,10 @@ const controls = {
 //shapes
 let square: Square;
 let road1: RoadBlock;
+let cityMesh: Set<City>;
 let city1: City;
-let city2: City;
+let grasses: City;
+let flowers: City;
 
 let carrot: Carrot;
 
@@ -39,6 +44,7 @@ let carrot: Carrot;
 let shapeRen: ShapeRenderer;
 let shapeGram: ShapeGrammar;
 let roads: City;
+let tops: City;
 
 let iteration: number;
 let axiom: string;
@@ -53,49 +59,245 @@ function loadScene() {
   square = new Square(vec3.fromValues(0, 0, 0));
   square.create();
   roads.create();
-  city1.create();
+  cityMesh.forEach(function (building: City) {
+    building.create();
+  });
+  grasses.create();
+  flowers.create();
+  tops.create();
+}
+
+function distance(one: vec2, two: vec2) {
+  var a = one[0] - two[0];
+  var b = one[1] - two[1];
+
+  var c = Math.sqrt(a * a + b * b);
 }
 
 function main() {
-  //create roads
-  roads = new City(vec3.fromValues(i * 10, 0, 0));
-  for (var i = 0; i < 19; ++i) {
-    var road = new RoadBlock(vec3.fromValues(0, 0, 0));
-    var vertices = road.getPos();
-    vertices = rotateVertices(9, vec3.fromValues(0, 1, 0), vertices);
-    vertices = translateVertices(vertices, vec3.fromValues(i * 10 - 90, 0, 0));
-    road.setPos(vertices);
-    roads.addRoad(road);
+  cityMesh = new Set<City>();
+  tops = new City(vec3.fromValues(0,0,0));
+  grasses = new City(vec3.fromValues(0,0,0));
+  flowers = new City(vec3.fromValues(0,0,0));
 
-    var road = new RoadBlock(vec3.fromValues(0, 0, 0));
-    var vertices = road.getPos();
-    vertices = rotateVertices(9, vec3.fromValues(0, 1, 0), vertices);
-    vertices = translateVertices(vertices, vec3.fromValues(i * 10 - 90, 0, 0));
-    road.setPos(vertices);
-    roads.addRoad(road);
-  }
   //Shapes
   shapeGram = new ShapeGrammar();
   shapeRen = new ShapeRenderer();
 
-  var carrots = new Set<Carrot>();
-
-  for (var i = 0; i < 1; ++i) {
-    //let's start the chain
-    var symbol = "A";
-    var position = vec3.fromValues(0, i, 0);
-    var rotation = vec3.fromValues(0, 1, 0);
-    var scale = vec3.fromValues(0, 1, 0);
-    var material = "carrot";
-    var x = vec3.fromValues(1, 0, 0);
-    var z = vec3.fromValues(0, 0, 1);
-    var door = false;
-    var iter = 2;
-    //get a set of shapes from the shapeGrammar
-    city1 = new City(vec3.fromValues(0, 0, 0));
-    var shapeSet = shapeGram.doIterations(iter, position, rotation, scale, material, x, z, door);
-    city1 = shapeRen.build(shapeSet, city1);
+  //create grass
+  for(var i = 0; i < 200; ++i ) {
+    var rand1 = Math.random() * 200 - 100;
+    var rand2 = Math.random() * 200 - 100;
+    var grassPos = vec3.fromValues(rand1, 0, rand2);
+    var newGrass = new Grass(vec3.fromValues(0,0,0));
+    var vertices = newGrass.getPos();
+    vertices = rotateVertices(9, vec3.fromValues(0, 1, 0), vertices);
+    vertices = translateVertices(vertices, grassPos);
+    newGrass.setPos(vertices)
+    grasses.addGrass(newGrass);
   }
+
+    //create flowers
+    for(var i = 0; i < 100; ++i ) {
+      var rand1 = Math.random() * 200 - 100;
+      var rand2 = Math.random() * 200 - 100;
+      var flowerPos = vec3.fromValues(rand1, 0, rand2);
+      var newflower = new Flower(vec3.fromValues(0,0,0));
+      var vertices = newflower.getPos();
+      vertices = rotateVertices(9, vec3.fromValues(0, 1, 0), vertices);
+      vertices = translateVertices(vertices, flowerPos);
+      newflower.setPos(vertices);
+      flowers.addFlower(newflower);
+    }
+
+  //create roads
+  roads = new City(vec3.fromValues(i * 10, 0, 0));
+  for (var i = 0; i < 18; ++i) {
+
+    var rand = Math.random() * 10;
+    var roadBlockPos1 = vec3.fromValues(0 + rand, 0, i * 10 - 90);
+    var road = new RoadBlock(vec3.fromValues(0, 0, 0));
+    var vertices = road.getPos();
+    vertices = rotateVertices(9, vec3.fromValues(0, 1, 0), vertices);
+    vertices = translateVertices(vertices, roadBlockPos1);
+    road.setPos(vertices);
+    roads.addRoad(road);
+
+    if(i % 4 === 0) { 
+       //let's start the chain
+       var symbol = "A";
+       var position = vec3.fromValues(roadBlockPos1[0] + 10, 0, roadBlockPos1[2]);
+       var rotation = vec3.fromValues(1, i, 1);
+       var scale = vec3.fromValues(1, 1, 1);
+       var material = "carrot";
+       var x = vec3.fromValues(1, 0, 0);
+       var z = vec3.fromValues(0, 0, i);
+       var door = false;
+       var iter = 10;
+
+        //add a carrot top at the position
+        var top = new CarrotTop(vec3.fromValues(0,0,0));
+        var vertices = top.getPos();
+        vertices = scaleVertices(vertices, vec3.fromValues(3,3,3));
+        vertices = rotateVertices(9, vec3.fromValues(0, 1, 0), vertices);
+        vertices = translateVertices(vertices, vec3.fromValues(position[0], position[1] + 10, position[2]));
+        top.setPos(vertices);
+        tops.addCarrotTop(top);
+  
+       //get a set of shapes from the shapeGrammar
+       city1 = new City(vec3.fromValues(0, 0, 0));
+       var shapeSet = shapeGram.doIterations(iter, position, rotation, scale, material, x, z, door);
+       city1 = shapeRen.build(shapeSet, city1);
+       cityMesh.add(city1);
+    }
+
+    var rand = Math.random() * 10;
+    var roadBlockPos2 = vec3.fromValues(-60 + rand, 0, i * 10 - 90);
+    var road = new RoadBlock(vec3.fromValues(0, 0, 0));
+    var vertices = road.getPos();
+    vertices = rotateVertices(9, vec3.fromValues(0, 1, 0), vertices);
+    vertices = translateVertices(vertices, roadBlockPos2);
+    road.setPos(vertices);
+    roads.addRoad(road);
+
+    if (i % 3 === 0) {
+      //let's start the chain
+      var symbol = "A";
+      var position = vec3.fromValues(roadBlockPos2[0] + 20, 0, roadBlockPos2[2] + 2);
+      var rotation = vec3.fromValues(1, i, 1);
+      var scale = vec3.fromValues(1, 1, 1);
+      var material = "carrot";
+      var x = vec3.fromValues(1, 0, 0);
+      var z = vec3.fromValues(0, 0, 1);
+      var door = false;
+      var iter = 2;
+
+      //add a carrot top at the position
+      var top = new CarrotTop(vec3.fromValues(0,0,0));
+      var vertices = top.getPos();
+      vertices = scaleVertices(vertices, vec3.fromValues(3,3,3));
+      vertices = rotateVertices(9, vec3.fromValues(0, 1, 0), vertices);
+      vertices = translateVertices(vertices, vec3.fromValues(position[0], position[1] + 10, position[2]));
+      top.setPos(vertices);
+      tops.addCarrotTop(top);
+
+      //get a set of shapes from the shapeGrammar
+      city1 = new City(vec3.fromValues(0, 0, 0));
+      var shapeSet = shapeGram.doIterations(iter, position, rotation, scale, material, x, z, door);
+      city1 = shapeRen.build(shapeSet, city1);
+      cityMesh.add(city1);
+    }
+    if (i % 4 === 0) {
+      //let's start the chain
+      var symbol = "A";
+      var position = vec3.fromValues(roadBlockPos2[0] - 20, 0, roadBlockPos2[2] + 2);
+      var rotation = vec3.fromValues(1, i, 1);
+      var scale = vec3.fromValues(1, 1, 1);
+      var material = "carrot";
+      var x = vec3.fromValues(1, 0, 0);
+      var z = vec3.fromValues(0, 0, 1);
+      var door = false;
+      var iter = 2;
+          //add a carrot top at the position
+          var top = new CarrotTop(vec3.fromValues(0,0,0));
+          var vertices = top.getPos();
+          vertices = scaleVertices(vertices, vec3.fromValues(3,3,3));
+          vertices = rotateVertices(9, vec3.fromValues(0, 1, 0), vertices);
+          vertices = translateVertices(vertices, vec3.fromValues(position[0], position[1] + 10, position[2]));
+          top.setPos(vertices);
+          tops.addCarrotTop(top);
+    
+      //get a set of shapes from the shapeGrammar
+      city1 = new City(vec3.fromValues(0, 0, 0));
+      var shapeSet = shapeGram.doIterations(iter, position, rotation, scale, material, x, z, door);
+      city1 = shapeRen.build(shapeSet, city1);
+      cityMesh.add(city1);
+    }
+
+    var rand = Math.random() * 10;
+    var roadBlockPos3 = vec3.fromValues(60 + rand, 0, i * 10 - 90);
+    var road = new RoadBlock(vec3.fromValues(0, 0, 0));
+    var vertices = road.getPos();
+    vertices = rotateVertices(9, vec3.fromValues(0, 1, 0), vertices);
+    vertices = translateVertices(vertices, roadBlockPos3);
+    road.setPos(vertices);
+    roads.addRoad(road);
+
+    if (i % 3 === 0) {
+      //let's start the chain
+      var symbol = "A";
+      var position = vec3.fromValues(roadBlockPos3[0] + 20, 0, roadBlockPos3[2] + 2);
+      var rotation = vec3.fromValues(1, i, 1);
+      var scale = vec3.fromValues(1, 1, 1);
+      var material = "carrot";
+      var x = vec3.fromValues(1, 0, 0);
+      var z = vec3.fromValues(0, 0, 1);
+      var door = false;
+      var iter = 4;
+
+          //add a carrot top at the position
+          var top = new CarrotTop(vec3.fromValues(0,0,0));
+          var vertices = top.getPos();
+          vertices = scaleVertices(vertices, vec3.fromValues(3,3,3));
+          vertices = rotateVertices(9, vec3.fromValues(0, 1, 0), vertices);
+          vertices = translateVertices(vertices, vec3.fromValues(position[0], position[1] + 10, position[2]));
+          top.setPos(vertices);
+          tops.addCarrotTop(top);
+    
+      //get a set of shapes from the shapeGrammar
+      city1 = new City(vec3.fromValues(0, 0, 0));
+      var shapeSet = shapeGram.doIterations(iter, position, rotation, scale, material, x, z, door);
+      city1 = shapeRen.build(shapeSet, city1);
+      cityMesh.add(city1);
+    }
+    if (i % 4 === 0) {
+      //let's start the chain
+      var symbol = "A";
+      var position = vec3.fromValues(roadBlockPos3[0] - 20, 0, roadBlockPos3[2] + 2);
+      var rotation = vec3.fromValues(1, i, 1);
+      var scale = vec3.fromValues(1, 1, 1);
+      var material = "carrot";
+      var x = vec3.fromValues(1, 0, 0);
+      var z = vec3.fromValues(0, 0, 1);
+      var door = false;
+      var iter = 4;
+
+          //add a carrot top at the position
+          var top = new CarrotTop(vec3.fromValues(0,0,0));
+          var vertices = top.getPos();
+          vertices = scaleVertices(vertices, vec3.fromValues(3,3,3));
+          vertices = rotateVertices(9, vec3.fromValues(0, 1, 0), vertices);
+          vertices = translateVertices(vertices, vec3.fromValues(position[0], position[1] + 10, position[2]));
+          top.setPos(vertices);
+          tops.addCarrotTop(top);
+    
+      //get a set of shapes from the shapeGrammar
+      city1 = new City(vec3.fromValues(0, 0, 0));
+      var shapeSet = shapeGram.doIterations(iter, position, rotation, scale, material, x, z, door);
+      city1 = shapeRen.build(shapeSet, city1);
+      cityMesh.add(city1);
+    }
+  }
+
+
+
+  // for (var i = 0; i < 2; ++i) {
+  //   //let's start the chain
+  //   var symbol = "A";
+  //   var position = vec3.fromValues(i, 0, i);
+  //   var rotation = vec3.fromValues(1, 1, 1);
+  //   var scale = vec3.fromValues(1, 1, 1);
+  //   var material = "carrot";
+  //   var x = vec3.fromValues(1, 0, i);
+  //   var z = vec3.fromValues(i, 0, 1);
+  //   var door = false;
+  //   var iter = 2;
+  //   //get a set of shapes from the shapeGrammar
+  //   city1 = new City(vec3.fromValues(0, 0, 0));
+  //   var shapeSet = shapeGram.doIterations(iter, position, rotation, scale, material, x, z, door);
+  //   city1 = shapeRen.build(shapeSet, city1);
+  //   cityMesh.add(city1);
+  // }
 
   // Initial display for framerate
   const stats = Stats();
@@ -169,7 +371,18 @@ function main() {
     road_lambert.setGeometryColor(road_color);
     renderer.render(camera, road_lambert, [roads]);
 
-    renderer.render(camera, carrot_lambert, [city1]);
+    let grass_color = vec4.fromValues(120 / 255, 200 / 255, 20 / 255, 1);
+    road_lambert.setGeometryColor(grass_color);
+    renderer.render(camera, road_lambert, [grasses]);
+    renderer.render(camera, road_lambert, [tops]);
+
+    let flower_color = vec4.fromValues(200 / 255, 200 / 255, 200 / 255, 1);
+    road_lambert.setGeometryColor(flower_color);
+    renderer.render(camera, road_lambert, [flowers]);
+
+    cityMesh.forEach(function (building: City) {
+      renderer.render(camera, carrot_lambert, [building]);
+    });
     //renderer.render(camera, base_lambert, [square]);
     //tester cylinder
     //renderer.render(camera, tree_lambert, [flower]);

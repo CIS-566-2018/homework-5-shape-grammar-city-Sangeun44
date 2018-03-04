@@ -5,6 +5,9 @@ import Carrot from './Carrot';
 import Chimney from './Chimney';
 import Door from './Door';
 import RoadBlock from './RoadBlock';
+import Grass from './Grass';
+import Flower from './Flower';
+import CarrotTop from './CarrotTop';
 
 class City extends Drawable {
     indices: Uint32Array;
@@ -47,6 +50,129 @@ class City extends Drawable {
 }
 
   addChimney(chim: Chimney) {
+    var objInd = new Array<number>();
+    objInd = chim.getInd();
+    var objNorm = new Array<number>();
+    objNorm = chim.getNorm();
+    var objPos = new Array<number>();
+    objPos = chim.getPos();
+
+    for(var i = 0; i < objPos.length; ++i) {
+      this.pos.push(objPos[i]);
+      // console.log("pos:" + objPos[i]);
+    } 
+    for(var i = 0; i < objNorm.length; ++i) {
+      this.norm.push(objNorm[i]);
+      // console.log("norms:" + objNorm[i]);
+    } 
+    var lastInd = 0;
+    if(this.ind.length > 0) {
+     // var max = Math.max.apply(null, this.ind);
+     var max = this.indexOfMax(this.ind);
+     var maxE = this.ind[max];
+     // var ind2 = this.ind;
+     // ind2.sort(function(a, b){return b - a});
+      lastInd = maxE + 1;
+      //console.log("maxInd:" + maxE);
+
+    } 
+    // if(this.ind.length > 0) {
+    //   var lastInd = this.ind[this.ind.length - 1] + 4;
+    // } else {
+    //   var lastInd = 0;
+    // }
+    // console.log("beg Ind: " + lastInd);
+    for(var i = 0; i < objInd.length; ++i) {
+      // console.log("index: " + lastInd);
+      // console.log("index num: " + objInd.length);
+      this.ind.push(objInd[i] + lastInd);
+      // console.log("ind:" + objInd[i]);
+    }
+  }
+
+  addCarrotTop(chim: CarrotTop) {
+    var objInd = new Array<number>();
+    objInd = chim.getInd();
+    var objNorm = new Array<number>();
+    objNorm = chim.getNorm();
+    var objPos = new Array<number>();
+    objPos = chim.getPos();
+
+    for(var i = 0; i < objPos.length; ++i) {
+      this.pos.push(objPos[i]);
+      // console.log("pos:" + objPos[i]);
+    } 
+    for(var i = 0; i < objNorm.length; ++i) {
+      this.norm.push(objNorm[i]);
+      // console.log("norms:" + objNorm[i]);
+    } 
+    var lastInd = 0;
+    if(this.ind.length > 0) {
+     // var max = Math.max.apply(null, this.ind);
+     var max = this.indexOfMax(this.ind);
+     var maxE = this.ind[max];
+     // var ind2 = this.ind;
+     // ind2.sort(function(a, b){return b - a});
+      lastInd = maxE + 1;
+      //console.log("maxInd:" + maxE);
+
+    } 
+    // if(this.ind.length > 0) {
+    //   var lastInd = this.ind[this.ind.length - 1] + 4;
+    // } else {
+    //   var lastInd = 0;
+    // }
+    // console.log("beg Ind: " + lastInd);
+    for(var i = 0; i < objInd.length; ++i) {
+      // console.log("index: " + lastInd);
+      // console.log("index num: " + objInd.length);
+      this.ind.push(objInd[i] + lastInd);
+      // console.log("ind:" + objInd[i]);
+    }
+
+  }
+  addFlower(chim: Flower) {
+    var objInd = new Array<number>();
+    objInd = chim.getInd();
+    var objNorm = new Array<number>();
+    objNorm = chim.getNorm();
+    var objPos = new Array<number>();
+    objPos = chim.getPos();
+
+    for(var i = 0; i < objPos.length; ++i) {
+      this.pos.push(objPos[i]);
+      // console.log("pos:" + objPos[i]);
+    } 
+    for(var i = 0; i < objNorm.length; ++i) {
+      this.norm.push(objNorm[i]);
+      // console.log("norms:" + objNorm[i]);
+    } 
+    var lastInd = 0;
+    if(this.ind.length > 0) {
+     // var max = Math.max.apply(null, this.ind);
+     var max = this.indexOfMax(this.ind);
+     var maxE = this.ind[max];
+     // var ind2 = this.ind;
+     // ind2.sort(function(a, b){return b - a});
+      lastInd = maxE + 1;
+      //console.log("maxInd:" + maxE);
+
+    } 
+    // if(this.ind.length > 0) {
+    //   var lastInd = this.ind[this.ind.length - 1] + 4;
+    // } else {
+    //   var lastInd = 0;
+    // }
+    // console.log("beg Ind: " + lastInd);
+    for(var i = 0; i < objInd.length; ++i) {
+      // console.log("index: " + lastInd);
+      // console.log("index num: " + objInd.length);
+      this.ind.push(objInd[i] + lastInd);
+      // console.log("ind:" + objInd[i]);
+    }
+
+  }
+  addGrass(chim: Grass) {
     var objInd = new Array<number>();
     objInd = chim.getInd();
     var objNorm = new Array<number>();
