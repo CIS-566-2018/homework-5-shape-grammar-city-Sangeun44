@@ -1,19 +1,7 @@
 
 # Project 5: Shape Grammar
 
-For this assignment you'll be building directly off of the L-system code you
-wrote last week.
-
-**Goal:** to model an urban environment using a shape grammar.
-
-**Note:** We’re well aware that a nice-looking procedural city is a lot of work for a single week. Focus on designing a nice building grammar. The city layout strategies outlined in class (the extended l-systems) are complex and not expected. We will be satisfied with something reasonably simple, just not a uniform grid!
-
-## Symbol Node (5 points)
-Modify your symbol node class to include attributes necessary for rendering, such as
-- Associated geometry instance
-- Position
-- Scale
-- Anything else you may need
+The Shape object has a symbol to separate what happens to which symbol. 
 
 ## Grammar design (55 points)
 - Design at least five shape grammar rules for producing procedural buildings. Your buildings should vary in geometry and decorative features (beyond just differently-scaled cubes!). At least some of your rules should create child geometry that is in some way dependent on its parent’s state. (20 points)
