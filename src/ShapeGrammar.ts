@@ -11,10 +11,11 @@ export default class ShapeGrammar {
             this.shapeSet = new Set();
       }
 
+      //create 
       config1 = function (shape: Shape) {
             if (this.shapeSet.size != 0) {
                   var scale1 = vec3.fromValues(shape.scale[0], shape.scale[1], shape.scale[2]);
-                  scale1[0] *= 0.5;
+                  //scale1[0] *= 0.5;
                   var pos1 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
                   pos1[0] = pos1[0] - 0.75 * shape.x[0];
                   pos1[1] = pos1[1] - 0.75 * shape.x[1];
@@ -23,8 +24,9 @@ export default class ShapeGrammar {
                   this.shapeSet.add(new Shape('D', pos1, shape.rotation, scale1, shape.material, shape.x, shape.z, false));
 
                   var scale2 = vec3.fromValues(shape.scale[0], shape.scale[1], shape.scale[2]);
-                  scale2[0] *= 0.5;
-                  scale2[2] *= 0.5;
+                  scale2[0] *= 0.9;
+                  scale2[1] *= 0.9;
+                  scale2[2] *= 0.9;
                   var pos2 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
                   pos2[0] = pos2[0] - 0.75 * shape.x[0];
                   pos2[1] = pos2[1] - 0.75 * shape.x[1];
@@ -51,17 +53,20 @@ export default class ShapeGrammar {
             if (this.shapeSet.size != 0) {
                   var scale1 = vec3.fromValues(shape.scale[0], shape.scale[1], shape.scale[2]);
                   //scale1[0] *= 0.5;
+                  var rotate1 = vec3.fromValues(shape.rotation[0], shape.rotation[1], shape.rotation[2]);
+                  rotate1[2] += 3.1415 / 13.0;
                   var pos1 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
                   pos1[0] = pos1[0] - 0.75 * shape.x[0];
                   pos1[1] = pos1[1] - 0.75 * shape.x[1];
                   pos1[2] = pos1[2] - 0.75 * shape.x[2];
-                  this.shapeSet.add(new Shape('D', pos1, shape.rotation, scale1, shape.material, shape.x, shape.z, false));
+                  this.shapeSet.add(new Shape('D', pos1, rotate1, scale1, shape.material, shape.x, shape.z, false));
 
                   var scale2 = vec3.fromValues(shape.scale[0], shape.scale[1], shape.scale[2]);
-                  scale2[0] *= 0.4;
-                  scale2[2] *= 0.5;
+                  scale2[0] *= 0.9;
+                  scale2[1] *= 0.9;
+                  scale2[2] *= 0.9;
                   var rot = vec3.fromValues(shape.rotation[0], shape.rotation[1], shape.rotation[2]);
-                  rot[2] += 3.1415 / 2.0;
+                  rot[2] += 3.1415 / 31.0;
 
                   var xax = vec3.fromValues(shape.x[0], shape.x[1], shape.x[2]);
                   var matx = this.rotationMatrix(vec3.fromValues(0, 1, 0), 3.1415 / 2.0);
@@ -105,42 +110,46 @@ export default class ShapeGrammar {
             }
       }
 
-      //subdivide in z, make three new shapes rotated to face front in front half
+      //make 2 new shapes rotated to face front in front half
       config3 = function (shape: Shape) {
             if (this.shapeSet.size != 0) {
                   var scale1 = vec3.fromValues(shape.scale[0], shape.scale[1], shape.scale[2]);
-                  scale1[0] *= 0.5;
+                  scale1[0] *= 0.3;
+                  scale1[1] *= 0.3;
+                  scale1[2] *= 0.3;
                   var pos1 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
-                  pos1[0] = pos1[0] - 0.75 * shape.x[0];
-                  pos1[1] = pos1[1] - 0.75 * shape.x[1];
-                  pos1[2] = pos1[2] - 0.75 * shape.x[2];
+                  pos1[0] = pos1[0] - 2;
+                  // pos1[1] = pos1[1] - 0;
+                  pos1[2] = pos1[2] - 2;
                   this.shapeSet.add(new Shape('D', pos1, shape.rotation, scale1, shape.material, shape.x, shape.z, false));
 
                   var scale2 = vec3.fromValues(shape.scale[0], shape.scale[1], shape.scale[2]);
-                  scale2[0] *= 0.3;
-                  scale2[2] *= 0.5;
+                  scale2[0] *= 0.9;
+                  scale2[1] *= 0.9;
+                  scale2[2] *= 0.9;
                   var rot = vec3.fromValues(shape.rotation[0], shape.rotation[1], shape.rotation[2]);
-                  rot[1] += 3.1415 / 2.0;
+                  rot[1] += 3.1415 / 12.0;
 
                   var xax = vec3.fromValues(shape.x[0], shape.x[1], shape.x[2]);
-                  var matx = this.rotationMatrix(vec3.fromValues(0, 1, 0), 3.1415 / 2.0);
+                  var matx = this.rotationMatrix(vec3.fromValues(1, 0, 0), 3.1415 / 2.0);
                   vec3.transformMat4(xax, xax, matx);
 
                   var zax = vec3.fromValues(shape.z[0], shape.z[1], shape.z[2]);
-                  var matz = this.rotationMatrix(vec3.fromValues(0, 1, 0), 3.1415 / 2.0);
+                  var matz = this.rotationMatrix(vec3.fromValues(0, 0, 1), 3.1415 / 2.0);
                   vec3.transformMat4(zax, zax, matz);
 
                   var pos2 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
-                  pos2[0] = pos2[0] + 0.5 * shape.x[0];
-                  pos2[1] = pos2[1] + 0.5 * shape.x[1];
-                  pos2[2] = pos2[2] + 0.5 * shape.x[2];
+                  pos2[0] = pos2[0] + 5;
+                  pos2[1] = pos2[1] + 10;
+                  pos2[2] = pos2[2] + 2.5 * shape.x[2];
                   var shape2 = new Shape('C', pos2, rot, scale2, shape.material, xax, zax, false);
                   this.shapeSet.add(shape2);
 
+                  var rand = Math.random() * 10;
                   var pos3 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
-                  pos3[0] = pos3[0] + 0.5 * shape.x[0];
+                  pos3[0] = pos3[0] + rand * shape.x[0];
                   pos3[1] = pos3[1] + 0.5 * shape.x[1];
-                  pos3[2] = pos3[2] + 0.5 * shape.x[2];
+                  pos3[2] = pos3[2] + rand * shape.x[2];
                   pos3[0] = pos3[0] - 1.6 * shape.z[0];
                   pos3[1] = pos3[1] - 1.6 * shape.z[1];
                   pos3[2] = pos3[2] - 1.6 * shape.z[2];
@@ -154,14 +163,14 @@ export default class ShapeGrammar {
                   pos4[0] = pos4[0] + 1.6 * shape.z[0];
                   pos4[1] = pos4[1] + 1.6 * shape.z[1];
                   pos4[2] = pos4[2] + 1.6 * shape.z[2];
-                  var shape4 = new Shape('C', pos4, rot, scale2, shape.material, xax, zax, false);
+                  var shape4 = new Shape('F', pos4, rot, scale2, shape.material, xax, zax, false);
                   this.shapeSet.add(shape4);
 
-                  var rando = Math.random();
-                  if (rando < 0.333) {
+                  var rand = Math.random();
+                  if (rand < 0.333) {
                         shape2.door = true;
                   }
-                  else if (rando < 0.666) {
+                  else if (rand < 0.666) {
                         shape3.door = true;
                   }
                   else {
@@ -175,25 +184,27 @@ export default class ShapeGrammar {
       //add half sized shape to left side of parent shape
       modif1 = function (shape: Shape) {
             if (this.shapeSet.size != 0) {
+                  var rand1 = Math.random() * 20;
                   var scale1 = vec3.fromValues(shape.scale[0], shape.scale[1], shape.scale[2]);
                   scale1[0] *= 0.5;
-                  scale1[1] *= 0.9;
+                  scale1[1] *= 0.5;
                   scale1[2] *= 0.5;
                   var pos1 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
-                  pos1[0] = pos1[0] + 1.75 * shape.z[0];
+                  pos1[0] = pos1[0] + rand1 * shape.z[0];
                   pos1[1] = pos1[1] + 1.75 * shape.z[1];
                   pos1[2] = pos1[2] + 1.75 * shape.z[2];
                   pos1[1] -= 0.25;
-                  this.shapeSet.add(new Shape('T', pos1, shape.rotation, scale1, shape.material, shape.x, shape.z, false));
+                  this.shapeSet.add(new Shape('C', pos1, shape.rotation, scale1, shape.material, shape.x, shape.z, false));
 
-                  var scale = vec3.fromValues(0.5, 1.0, 0.1);
+                  var scale = vec3.fromValues(1.5, 1.5, 1.1);
                   var pos2 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
-                  pos2[0] = pos2[0] + 2.4 * shape.z[0];
-                  pos2[1] = pos2[1] + 2.4 * shape.z[1];
-                  pos2[2] = pos2[2] + 2.4 * shape.z[2];
+                  var rand = Math.random() * 2;
+                  pos2[0] = pos2[0] + rand * shape.z[0];
+                  pos2[1] = pos2[1] + rand * shape.z[1];
+                  pos2[2] = pos2[2] + rand * shape.z[2];
                   pos2[1] -= 0.5;
-                  pos2[0] = pos2[0] + .15 * shape.x[0];
-                  pos2[1] = pos2[1] + .15 * shape.x[1];
+                  pos2[0] = pos2[0] + rand * shape.x[0];
+                  pos2[1] = pos2[1] + rand * shape.x[1];
                   pos2[2] = pos2[2] + .15 * shape.x[2];
                   this.shapeSet.add(new Shape('G', pos2, shape.rotation, scale, shape.material, shape.x, shape.z, false));
             }
@@ -204,7 +215,7 @@ export default class ShapeGrammar {
             if (this.shapeSet.size != 0) {
                   var scale1 = vec3.fromValues(shape.scale[0], shape.scale[1], shape.scale[2]);
                   scale1[0] *= 0.5;
-                  scale1[1] *= 0.75;
+                  scale1[1] *= 0.5;
                   scale1[2] *= 0.5;
                   var pos1 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
                   pos1[0] = pos1[0] - 1.75 * shape.z[0];
@@ -213,7 +224,7 @@ export default class ShapeGrammar {
                   pos1[1] -= 0.25;
                   this.shapeSet.add(new Shape('T', pos1, shape.rotation, scale1, shape.material, shape.x, shape.z, false));
 
-                  var scale = vec3.fromValues(0.5, 1.0, 0.1);
+                  var scale = vec3.fromValues(0.5, 0.5, 0.5);
                   var pos2 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
                   pos2[0] = pos2[0] - 2.4 * shape.z[0];
                   pos2[1] = pos2[1] - 2.4 * shape.z[1];
@@ -231,7 +242,7 @@ export default class ShapeGrammar {
                   this.shapeSet.delete(shape);
 
                   if (shape.door) {
-                        var scale = vec3.fromValues(0.5, 1.0, 0.1);
+                        var scale = vec3.fromValues(0.5, 0.5, 0.5);
                         var pos1 = shape.position;
                         pos1[2] -= 0.5;
                         this.shapeSet.add(new Shape('G', pos1, shape.rotation, scale, shape.material, shape.x, shape.z, false));
@@ -239,16 +250,16 @@ export default class ShapeGrammar {
             }
       }
 
-      //do nothing to this shape, return it unchanged
+      //half scale shape
       modif4 = function (shape: Shape) {
             if (this.shapeSet.size != 0) {
                   if (shape.door) {
-                        var scale = vec3.fromValues(0.5, 1.0, 0.1);
+                        var scale = vec3.fromValues(0.5, 1.0, 0.5);
                         var pos1 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
                         pos1[0] = pos1[0] + 1.25 * shape.z[0];
                         pos1[1] = pos1[1] + 1.25 * shape.z[1];
                         pos1[2] = pos1[2] + 1.25 * shape.z[2];
-                        pos1[1] -= 0.5;
+                        pos1[2] -= 0.5;
                         this.shapeSet.add(new Shape('G', pos1, shape.rotation, scale, shape.material, shape.x, shape.z, false));
                   }
             }
@@ -258,9 +269,9 @@ export default class ShapeGrammar {
       modif5 = function (shape: Shape) {
             if (this.shapeSet.size != 0) {
                   var scale1 = vec3.fromValues(shape.scale[0], shape.scale[1], shape.scale[2]);
-                  scale1[1] *= 1.25;
+                  scale1[1] *= 0.5;
                   var pos1 = vec3.fromValues(shape.position[0], shape.position[1], shape.position[2]);
-                  pos1[1] += 0.25;
+                  pos1[1] += 0.5;
                   this.shapeSet.add(new Shape('T', pos1, shape.rotation, scale1, shape.material, shape.x, shape.z, false));
 
                   this.shapeSet.delete(shape);
@@ -381,7 +392,7 @@ export default class ShapeGrammar {
 
       parseA = function (shape: Shape) {
             var rand = Math.random();
-            if (rand < 0.2) {
+            if (rand < 0.4) {
                   this.config1(shape);
             } else if (rand < 0.6) {
                   this.config2(shape);
@@ -447,15 +458,16 @@ export default class ShapeGrammar {
                   for (var i = 0; i < array.length; ++i) {
                         if (shape.symbol == 'A') {
                               this.parseA(shape);
-                        } else if (shape.symbol == 'B') {
-                              this.modif1(shape);
-                        } else if (shape.symbol == 'C') {
-                              this.parseC(shape);
-                        } else if (shape.symbol == 'D') {
-                              this.parseD(shape);
-                        } else if (shape.symbol == 'E') {
-                              this.modif2(shape);
                         }
+                        // } else if (shape.symbol == 'B') {
+                        //       this.modif1(shape);
+                        // } else if (shape.symbol == 'C') {
+                        //       this.parseC(shape);
+                        // } else if (shape.symbol == 'D') {
+                        //       this.parseD(shape);
+                        // } else if (shape.symbol == 'E') {
+                        //       this.modif2(shape);
+                        // }
                   }
             }
             return this.shapeSet;

@@ -12,6 +12,7 @@ export default class ShapeRenderer {
     
     constructor() {} 
 
+    //build the shapes according to the symbols
     build = function(shapeSet: Set<Shape>, citySet: City) {
         //var citySet = citySet;
         var array = Array.from(shapeSet);
@@ -23,71 +24,51 @@ export default class ShapeRenderer {
                     console.log("chimney:");
                     var chimney = new Chimney(vec3.fromValues(0,0,0));
                     var vertices = chimney.getPos();
-                    vertices = this.translateVertices(vertices, array[i].position);
-                    if(array[i].rotation[0] > 0) {
-                        var axis = vec3.fromValues(1, 0, 0); 
-                        var angle = array[i].rotation[0];
-                        vertices = this.rotateVertices(angle, axis, vertices);
-                    } 
-                    if(array[i].rotation[1] > 0) {
-                        var axis = vec3.fromValues(0, 1, 0); 
-                        var angle = array[i].rotation[1];
-                        vertices = this.rotateVertices(angle, axis, vertices);
-                    }
-                    if(array[i].rotation[2] > 0) {
-                        var axis = vec3.fromValues(0, 0, 1); 
-                        var angle = array[i].rotation[2];
-                        vertices = this.rotateVertices(angle, axis, vertices);
-                    }
-                    vertices = this.scaleVertices(vertices, array[i].scale);
+                    vertices = this.scaleVertices(vertices, vec3.fromValues(10,20,10));
+                    vertices = this.rotateVertices(6, vec3.fromValues(1,0,0), vertices);
+                    vertices = this.translateVertices(vertices, vec3.fromValues(array[i].position[0], array[i].position[1] + 12, array[i].position[2]+ 5));
                     chimney.setPos(vertices);
                     citySet.addChimney(chimney);
                 } else if(array[i].symbol == 'G') {
                     var mat;
                     var rand = Math.random();
-                    if(rand < 0.2) {
-                        mat = "carrot";
-                    }
-                    else if(rand < 0.4) {
-                        mat = "chimney";
-                    }
-                    else if(rand < 0.6) {
-                        mat = "carrot";
-                    }
-                    else {
-                        mat =  "chimney";
-                    }
                     console.log("door:");
                     var door = new Door(vec3.fromValues(0,0,0));
                     var vertices = door.getPos();
-                    vertices = this.translateVertices(vertices, array[i].position);
                     vertices = this.scaleVertices(vertices, array[i].scale);
+                    vertices = this.translateVertices(vertices, array[i].position);
                     door.setPos(vertices);
                     citySet.addDoor(door); 
-                } else if(array[i].symbol == 'B'){
-                        console.log("carrot:");
-                        var carrot = new Chimney(vec3.fromValues(0, 0, 0));
-                        var vertices = carrot.getPos();
-                        vertices = this.scaleVertices(vertices, array[i].scale);
-                        vertices = this.rotateVertices(90, vec3.fromValues(0,1,0), vertices);
-                        vertices = this.translateVertices(vertices, array[i].position);
-                        carrot.setPos(vertices);
-                        citySet.addCarrot(carrot); 
-                } else {
+                }
+                else {
                     var rand = Math.random();
                         console.log("carrot:");
                         var carrot = new Carrot(vec3.fromValues(0, 0, 0));
+                        var carrotTop = new CarrotTop(vec3.fromValues(0,0,0));
+                        var verticesTop = carrotTop.getPos();
                         var vertices = carrot.getPos();
-                        console.log("prev: " + vertices[1]);
-                        console.log("position: " + array[i].position);
+                        var rotation = array[i].rotation;
+                        console.log(rotation);
+                        if(rotation[0] > 0) {
+                            verticesTop = this.rotateVertices(rotation[0], vec3.fromValues(1,0,0), verticesTop);
+                            vertices = this.rotateVertices(rotation[0], vec3.fromValues(1,0,0), vertices);
+                        }
+                        if(rotation[1] > 0) {
+                            verticesTop = this.rotateVertices(rotation[1], vec3.fromValues(0,1,0), verticesTop);
+                            vertices = this.rotateVertices(rotation[1], vec3.fromValues(0,1,0), vertices);
+                        }
+                        if(rotation[2] > 0) {
+                            verticesTop = this.rotateVertices(rotation[2], vec3.fromValues(0,0,1), verticesTop);
+                            vertices = this.rotateVertices(rotation[2], vec3.fromValues(0,0,1), vertices);
+                        }
+                        verticesTop = this.scaleVertices(verticesTop, vec3.fromValues(1,2,1));
+                        verticesTop = this.translateVertices(verticesTop, vec3.fromValues(array[i].position[0] + 5, array[i].position[1] + 5, array[i].position[2]));
                         vertices = this.scaleVertices(vertices, array[i].scale);
-                        console.log("scale: " +  array[i].scale + " " + vertices[1]);
                         vertices = this.translateVertices(vertices, array[i].position);
-                        console.log("translate: " + array[i].position + " " + vertices[1]);
+                        carrotTop.setPos(verticesTop);
                         carrot.setPos(vertices);
-                        console.log("next: " + vertices[1]);
+                        //citySet.addCarrotTop(carrotTop);
                         citySet.addCarrot(carrot); 
-                        console.log("indices: " + citySet.ind.length);
                 }      
             }
         }
